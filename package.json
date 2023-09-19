@@ -27,6 +27,7 @@
     "eslint": "8.49.0",
     "eslint-config-next": "13.4.19",
     "formik": "^2.4.4",
+    "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.279.0",
     "mongoose": "^7.5.2",
     "next": "13.4.19",

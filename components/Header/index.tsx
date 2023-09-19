@@ -20,7 +20,7 @@ const Header: FC = () => {
   const a = 1;
 
   return (
-    <div className="p-5 px-10 flex justify-end absolute top-0 left-0 right-0">
+    <div className="p-5 max-[1600px]:p-8 px-10 flex justify-end absolute top-0 left-0 right-0 z-50">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button

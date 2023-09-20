@@ -2,6 +2,7 @@ import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import dayjs from 'dayjs';
+import { ICargoValues } from '@/types';
 
 export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
 
@@ -77,3 +78,94 @@ export const asyncDelay = (ms: number) => new Promise((resolve) => {
 
 export const numberRegExp = /^[0-9]*$/;
 export const floatNumberRegExp = /^[0-9.]*$/;
+
+export const isValidTime = (value: string) => {
+  if (value.length && (!floatNumberRegExp.test(value) || value === '.' || +value > 8)) {
+    return false;
+  }
+
+  if (value.includes('.')) {
+    const paths = value.split('.');
+
+    if (parseInt(paths[1], 10) > 59) {
+      return false;
+    }
+  }
+
+  return true;
+};
+
+export const roundToNearestIncrement = (num: number, increment: number) => (
+  +(Math.round(num / increment) * increment).toFixed(2)
+);
+
+export const calculateTime = (distance: number, averageSpeed: number) => {
+  const timeInHours = distance / averageSpeed;
+  const hours = Math.floor(timeInHours);
+  const minutes = Math.round((timeInHours - hours) * 60);
+
+  return {
+    duration: +`${hours}.${minutes < 10 ? `0${minutes}` : minutes}`,
+    hours,
+    minutes,
+  };
+};
+
+export const calculateCargo = (values: ICargoValues) => {
+  if (+(values.distance) < 50) return null;
+
+  const {
+    remainingWorkHours,
+    startDate,
+    startTime,
+    endDate,
+    endTime,
+    distance,
+    averageSpeed,
+  } = values;
+
+  if (remainingWorkHours && startDate && startTime && endDate && endTime && distance && averageSpeed) {
+    console.log(endDate, endTime);
+
+    const timeParts = endTime.split(':').map(Number);
+
+    const unloadDataTime = dayjs(endDate).set('hour', timeParts[0]).set('minute', timeParts[1]);
+    const calculateHours = calculateTime(+distance, averageSpeed);
+
+    console.log('calculateHours', calculateHours, 'unloadDataTime', unloadDataTime);
+
+    const result = unloadDataTime
+      .subtract(Math.floor(calculateHours.hours / 24), 'day')
+      .subtract(calculateHours.hours % 24, 'hour')
+      .subtract(calculateHours.minutes, 'minute')
+      .format();
+
+    console.log('result', result);
+
+    const days = dayjs(endDate).startOf('day').diff(dayjs(startDate).startOf('day'), 'day');
+    const hours = (((days === 1 ? 2 : days) * 8) || 8) - (8 - +remainingWorkHours);
+
+    const shortRest = calculateHours.duration / 4;
+
+    // console.log(
+    //   'days:',
+    //   days,
+    //   'hours:',
+    //   hours,
+    //   'calculatedHours:',
+    //   calculateHours,
+    //   'max distance:',
+    //   averageSpeed * hours,
+    //   'short rest:',
+    //   shortRest,
+    // );
+
+    return {
+      remainingHours: hours,
+      calculateHours,
+      shortRest,
+    };
+  }
+
+  return null;
+};

@@ -1,15 +1,17 @@
 'use client';
 
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Bed, Clock2, Clock3, Clock4, Coffee, Loader2 } from 'lucide-react';
+import { AlertCircle, Bed, Clock2, Clock3, Clock4, Coffee, Loader2 } from 'lucide-react';
 import { useFormik } from 'formik';
 import { validationCargo } from '@/utils/validations';
 import DatePicker from '@/components/ui/pickers/DataPicker';
-import { floatNumberRegExp, isObjEqual, numberRegExp } from '@/utils';
+import { calculateCargo, floatNumberRegExp, isObjEqual, isValidTime, numberRegExp } from '@/utils';
 import { ICargoValues } from '@/types';
 import { useContextUnsavedChanges } from '@/context/unsavedChanges';
+import dayjs from 'dayjs';
+import Prompt from '@/components/Prompt';
 
 interface ICargoForm {
   formRef: React.RefObject<HTMLFormElement>;
@@ -20,7 +22,7 @@ interface ICargoForm {
 
 const defaultValues: ICargoValues = {
   title: '',
-  startDate: undefined,
+  startDate: new Date(),
   startTime: '',
   endDate: undefined,
   endTime: '',
@@ -28,7 +30,7 @@ const defaultValues: ICargoValues = {
   distance: '',
   longRest: '',
   shortRest: '',
-  drivingToday: '',
+  remainingWorkHours: '',
 };
 
 const CargoForm: FC<ICargoForm> = ({
@@ -38,6 +40,9 @@ const CargoForm: FC<ICargoForm> = ({
   formRef,
 }) => {
   const { handleUnsavedChanges } = useContextUnsavedChanges();
+
+  const [isDisable, setIsDisable] = useState<boolean>(true);
+  const [isInvalid, setIsInvalid] = useState<boolean>(false);
 
   const formik = useFormik<ICargoValues>({
     initialValues: initialValues || defaultValues,
@@ -61,162 +66,195 @@ const CargoForm: FC<ICargoForm> = ({
     handleUnsavedChanges(false);
   }, [formik.values]);
 
+  useEffect(() => {
+    setIsDisable(false);
+  }, []);
+
+  useEffect(() => {
+    const result = calculateCargo(formik.values);
+
+    if (result?.calculateHours === undefined || result?.remainingHours === undefined) return;
+
+    if (result.calculateHours > result.remainingHours) {
+      setIsInvalid(true);
+    } else {
+      setIsInvalid(false);
+    }
+
+    formik.setFieldValue('shortRest', result.shortRest || '');
+  }, [formik.values]);
+
   return (
-    <form onSubmit={formik.handleSubmit} ref={formRef}>
-      <div className="grid gap-5">
-        <div className="grid gap-5 grid-cols-2">
-          <Input
-            name="title"
-            placeholder="Title"
-            autoCapitalize="none"
-            autoComplete="title"
-            autoCorrect="off"
-            label="Title *"
-            value={formik.values.title}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            error={formik.touched.title && formik.errors.title?.length ? formik.errors.title : null}
-          />
-          <Input
-            name="drivingToday"
-            label="Driving Time Today *"
-            placeholder="Type time"
-            icon={<Clock4 className="w-4/6 h-4/6" />}
-            value={formik.values.drivingToday}
-            maxLength={5}
-            helper="Type hours what you already spend today"
-            onChange={(e) => {
-              if (e.target.value === ''
-                  || (floatNumberRegExp.test(e.target.value) && parseFloat(e.target.value) <= 24)) {
-                formik.handleChange(e);
-              }
-            }}
-            onBlur={formik.handleBlur}
-            error={formik.touched.drivingToday && formik.errors.drivingToday?.length ? (
-              formik.errors.drivingToday
-            ) : null}
-          />
+    <>
+      {isInvalid ? (
+        <Prompt
+          variant="destructive"
+          description="Your calculation is invalid."
+          icon={<AlertCircle className="h-4 w-4" />}
+        />
+      ) : null}
+      <form onSubmit={formik.handleSubmit} ref={formRef}>
+        <div className="grid gap-5">
+          <div className="grid gap-5 grid-cols-2">
+            <Input
+              name="title"
+              placeholder="Title"
+              autoCapitalize="none"
+              autoComplete="title"
+              autoCorrect="off"
+              label="Title *"
+              disabled={isDisable}
+              value={formik.values.title}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={formik.touched.title && formik.errors.title?.length ? formik.errors.title : null}
+            />
+            <Input
+              name="remainingWorkHours"
+              label="Remaining Hours *"
+              placeholder="Type time"
+              icon={<Clock4 className="w-4/6 h-4/6" />}
+              value={formik.values.remainingWorkHours}
+              maxLength={4}
+              disabled={isDisable}
+              helper="Type the remaining work hours for today"
+              onChange={(e) => {
+                if (isValidTime(e.target.value)) formik.handleChange(e);
+              }}
+              onBlur={formik.handleBlur}
+              error={formik.touched.remainingWorkHours && formik.errors.remainingWorkHours?.length ? (
+                formik.errors.remainingWorkHours
+              ) : null}
+            />
+          </div>
+          <div className="grid gap-5 grid-cols-2">
+            <DatePicker
+              name="startDate"
+              label="Start Date *"
+              placeholder="Pick start date"
+              disabled={isDisable}
+              value={formik.values.startDate}
+              onBlur={formik.handleBlur}
+              onChange={(date: Date | undefined) => formik.setFieldValue('startDate', date)}
+              error={formik.touched.startDate && formik.errors.startDate?.length ? formik.errors.startDate : null}
+            />
+            <DatePicker
+              name="endDate"
+              label="Unload Date *"
+              placeholder="Pick unload date"
+              disabled={isDisable}
+              value={formik.values.endDate}
+              onBlur={formik.handleBlur}
+              onChange={(date: Date | undefined) => formik.setFieldValue('endDate', date)}
+              error={formik.touched.endDate && formik.errors.endDate?.length ? formik.errors.endDate : null}
+            />
+          </div>
+          <div className="grid gap-5 grid-cols-2">
+            <Input
+              type="time"
+              name="startTime"
+              label="Start Time *"
+              icon={<Clock2 className="w-4/6 h-4/6" />}
+              disabled={isDisable}
+              value={formik.values.startTime}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={formik.touched.startTime && formik.errors.startTime?.length ? formik.errors.startTime : null}
+            />
+            <Input
+              type="time"
+              name="endTime"
+              label="Unload Time *"
+              icon={<Clock3 className="w-4/6 h-4/6" />}
+              disabled={isDisable}
+              value={formik.values.endTime}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={formik.touched.endTime && formik.errors.endTime?.length ? formik.errors.endTime : null}
+            />
+          </div>
+          <div className="grid gap-5 grid-cols-[1fr_170px]">
+            <Input
+              prefix="km"
+              name="distance"
+              label="Distance"
+              placeholder="Type distance in km"
+              disabled={isDisable}
+              value={formik.values.distance}
+              maxLength={5}
+              onChange={(e) => {
+                if (e.target.value === '' || numberRegExp.test(e.target.value)) {
+                  formik.handleChange(e);
+                }
+              }}
+              onBlur={formik.handleBlur}
+              error={formik.touched.distance && formik.errors.distance?.length ? formik.errors.distance : null}
+            />
+            <Input
+              prefix="km/h"
+              name="averageSpeed"
+              placeholder="Average Speed"
+              label="Average Speed *"
+              disabled
+              value={formik.values.averageSpeed}
+              onChange={(e) => {
+                if (e.target.value === '' || numberRegExp.test(e.target.value)) {
+                  formik.handleChange(e);
+                }
+              }}
+              onBlur={formik.handleBlur}
+              error={formik.touched.averageSpeed && formik.errors.averageSpeed?.length ? (
+                formik.errors.averageSpeed
+              ) : null}
+            />
+          </div>
+          <div className="grid gap-5 grid-cols-2">
+            <Input
+              name="longRest"
+              label="Long Rest *"
+              icon={<Bed className="w-4/6 h-4/6" />}
+              placeholder="Type number"
+              helper="Each long rest is equal to 9 hours"
+              value={formik.values.longRest}
+              disabled={isDisable}
+              maxLength={1}
+              onChange={(e) => {
+                if (e.target.value === '' || numberRegExp.test(e.target.value)) {
+                  formik.handleChange(e);
+                }
+              }}
+              onBlur={formik.handleBlur}
+              error={formik.touched.longRest && formik.errors.longRest?.length ? formik.errors.longRest : null}
+            />
+            <Input
+              name="shortRest"
+              icon={<Coffee className="w-4/6 h-4/6" />}
+              label="Short Rest *"
+              helper="Each short rest is equal to 1 hour"
+              placeholder="Type number"
+              value={formik.values.shortRest}
+              disabled
+              maxLength={1}
+              onChange={(e) => {
+                if (e.target.value === '' || numberRegExp.test(e.target.value)) {
+                  formik.handleChange(e);
+                }
+              }}
+              onBlur={formik.handleBlur}
+              error={formik.touched.shortRest && formik.errors.shortRest?.length ? formik.errors.longRest : null}
+            />
+          </div>
+          <Button
+            disabled={formik.isSubmitting}
+            className="max-w-[200px] mr-0 ml-auto"
+            type="submit"
+          >
+            {formik.isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+            Create
+          </Button>
         </div>
-        <div className="grid gap-5 grid-cols-2">
-          <DatePicker
-            name="startDate"
-            label="Start Date *"
-            placeholder="Pick start date"
-            value={formik.values.startDate}
-            onBlur={formik.handleBlur}
-            onChange={(date: Date | undefined) => formik.setFieldValue('startDate', date)}
-            error={formik.touched.startDate && formik.errors.startDate?.length ? formik.errors.startDate : null}
-          />
-          <DatePicker
-            name="endDate"
-            label="End Date *"
-            placeholder="Pick end date"
-            value={formik.values.endDate}
-            onBlur={formik.handleBlur}
-            onChange={(date: Date | undefined) => formik.setFieldValue('endDate', date)}
-            error={formik.touched.endDate && formik.errors.endDate?.length ? formik.errors.endDate : null}
-          />
-        </div>
-        <div className="grid gap-5 grid-cols-2">
-          <Input
-            type="time"
-            name="startTime"
-            label="Start Time *"
-            icon={<Clock2 className="w-4/6 h-4/6" />}
-            value={formik.values.startTime}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            error={formik.touched.startTime && formik.errors.startTime?.length ? formik.errors.startTime : null}
-          />
-          <Input
-            type="time"
-            name="endTime"
-            label="End Time *"
-            icon={<Clock3 className="w-4/6 h-4/6" />}
-            value={formik.values.endTime}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            error={formik.touched.endTime && formik.errors.endTime?.length ? formik.errors.endTime : null}
-          />
-        </div>
-        <div className="grid gap-5 grid-cols-[1fr_170px]">
-          <Input
-            prefix="km"
-            name="distance"
-            label="Distance"
-            placeholder="Type distance in km"
-            value={formik.values.distance}
-            maxLength={5}
-            onChange={(e) => {
-              if (e.target.value === '' || numberRegExp.test(e.target.value)) {
-                formik.handleChange(e);
-              }
-            }}
-            onBlur={formik.handleBlur}
-            error={formik.touched.distance && formik.errors.distance?.length ? formik.errors.distance : null}
-          />
-          <Input
-            prefix="km/h"
-            name="averageSpeed"
-            placeholder="Average Speed"
-            label="Average Speed *"
-            disabled
-            value={formik.values.averageSpeed}
-            onChange={(e) => {
-              if (e.target.value === '' || numberRegExp.test(e.target.value)) {
-                formik.handleChange(e);
-              }
-            }}
-            onBlur={formik.handleBlur}
-            error={formik.touched.averageSpeed && formik.errors.averageSpeed?.length ? (
-              formik.errors.averageSpeed
-            ) : null}
-          />
-        </div>
-        <div className="grid gap-5 grid-cols-2">
-          <Input
-            name="longRest"
-            label="Long Rest *"
-            icon={<Bed className="w-4/6 h-4/6" />}
-            placeholder="Type number"
-            helper="Each long rest is equal to 9 hours"
-            value={formik.values.longRest}
-            maxLength={2}
-            onChange={(e) => {
-              if (e.target.value === '' || numberRegExp.test(e.target.value)) {
-                formik.handleChange(e);
-              }
-            }}
-            onBlur={formik.handleBlur}
-            error={formik.touched.longRest && formik.errors.longRest?.length ? formik.errors.longRest : null}
-          />
-          <Input
-            name="shortRest"
-            icon={<Coffee className="w-4/6 h-4/6" />}
-            label="Short Rest *"
-            helper="Each short rest is equal to 45 minutes"
-            placeholder="Type number"
-            value={formik.values.shortRest}
-            maxLength={2}
-            onChange={(e) => {
-              if (e.target.value === '' || numberRegExp.test(e.target.value)) {
-                formik.handleChange(e);
-              }
-            }}
-            onBlur={formik.handleBlur}
-            error={formik.touched.shortRest && formik.errors.shortRest?.length ? formik.errors.longRest : null}
-          />
-        </div>
-        <Button
-          disabled={formik.isSubmitting}
-          className="max-w-[200px] mr-0 ml-auto"
-          type="submit"
-        >
-          {formik.isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-          Create
-        </Button>
-      </div>
-    </form>
+      </form>
+    </>
   );
 };
 

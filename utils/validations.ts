@@ -104,10 +104,10 @@ export const validationCargo = yup.object().shape({
   averageSpeed: yup.number().default(77).required('This field is required'),
   startTime: yup.string().required('This field is required'),
   endTime: yup.string().required('This field is required'),
-  distance: yup.number().required('This field is required'),
+  distance: yup.number().required('This field is required').min(50, 'Min distance is 50 km'),
   longRest: yup.number().required('This field is required'),
   shortRest: yup.number().required('This field is required'),
-  drivingToday: yup.number().required('This field is required'),
+  remainingWorkHours: yup.number().required('This field is required').max(8, 'Max is 8 hours'),
 });
 
 export const validationChangePassword = yup.object().shape({

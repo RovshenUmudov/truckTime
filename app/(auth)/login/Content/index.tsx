@@ -4,8 +4,8 @@ import { FC } from 'react';
 import { useRouter } from 'next/navigation';
 import { ICredentials } from '@/types';
 import { signIn } from 'next-auth/react';
-import AuthForm from '@/components/Form';
 import useNotify from '@/hooks/notify';
+import AuthForm from '@/components/Forms/Auth';
 
 const LoginContent: FC = () => {
   const router = useRouter();

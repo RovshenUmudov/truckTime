@@ -5,8 +5,8 @@ import { signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { ICredentials, ITokens } from '@/types';
 import { fetchAPI } from '@/utils/fetch';
-import AuthForm from '@/components/Form';
 import useNotify from '@/hooks/notify';
+import AuthForm from '@/components/Forms/Auth';
 
 const SignUpContent: FC = () => {
   const { data, update } = useSession();

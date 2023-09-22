@@ -1,15 +1,16 @@
 import { FC } from 'react';
-import Header from '@/components/Header';
 import Banner from '@/components/Banner';
-import NewCargo from '@/components/NewCargo';
+import Header from '@/components/Header';
+import Container from '@/components/Container';
+import LinkButton from '@/components/ui/LinkButton';
 
 const Home: FC = () => (
   <>
     <Header />
-    <main className="container mx-auto py-5 max-[768px]:px-4">
+    <Container>
       <Banner src="/banner.jpg" />
-      <NewCargo />
-    </main>
+      <LinkButton label="New Cargo Transportation" href="/new-cargo" />
+    </Container>
   </>
 );
 

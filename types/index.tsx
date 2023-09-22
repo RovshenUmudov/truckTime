@@ -46,8 +46,22 @@ export interface ICargoValues {
     endDate: Date | undefined;
     endTime: string | undefined;
     averageSpeed: number;
-    distance: number | string;
+    distance: number | null;
     longRest: number | string;
     shortRest: number | string;
     remainingWorkHours: string | undefined;
+}
+
+export interface IDriving {
+    duration: number;
+    durationInSeconds: number;
+    hours: number;
+    minutes: number;
+}
+
+export interface ICalculateCargo {
+    remainingTime: number | null;
+    drivingHours: IDriving | null;
+    shortRest: number | null;
+    maxDistance: number | null;
 }

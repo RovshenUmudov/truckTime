@@ -14,7 +14,7 @@ const Banner: FC<IBanner> = ({ src }) => (
       priority
       className="!h-auto"
       sizes="(min-width: 1920px) 100vw"
-      quality={80}
+      quality={85}
     />
   </div>
 );

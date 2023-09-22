@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
-import MainLogo from '@/components/ui/mainLogo';
 import Image from 'next/image';
+import MainLogo from '@/components/ui/Logo';
 
 const AuthLayout = ({ children }: { children: ReactNode; }) => (
   <div className="container relative hidden h-screen flex-col items-center

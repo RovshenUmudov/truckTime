@@ -2,7 +2,7 @@ import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import dayjs from 'dayjs';
-import { ICargoValues } from '@/types';
+import { ICalculateCargo, ICargoValues } from '@/types';
 
 export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
 
@@ -130,8 +130,6 @@ export const remainingTimeToSeconds = (value: string) => {
 };
 
 export const calculateCargo = (values: ICargoValues) => {
-  if (+(values.distance) < 50) return null;
-
   const {
     remainingWorkHours,
     startDate,
@@ -142,30 +140,42 @@ export const calculateCargo = (values: ICargoValues) => {
     averageSpeed,
   } = values;
 
-  if (remainingWorkHours && startDate && startTime && endDate && endTime && distance && averageSpeed) {
+  let result: ICalculateCargo = {
+    remainingTime: null,
+    drivingHours: null,
+    shortRest: null,
+    maxDistance: null,
+  };
+
+  if (averageSpeed && startDate && startTime && endDate && endTime) {
     const loadDateTime = combineDateTime(startDate, startTime);
     const unloadDataTime = combineDateTime(endDate, endTime);
-
-    const remainingTime = remainingTimeToSeconds(remainingWorkHours);
-    const drivingHours = calculateDrivingTime(+distance, averageSpeed);
-    const shortRest = drivingHours.duration / 8 < 1 ? 0 : Math.round(drivingHours.duration / 8);
-
     const differenceInSeconds = unloadDataTime.diff(loadDateTime, 'seconds');
 
-    const seconds = differenceInSeconds - drivingHours.durationInSeconds - remainingTime;
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.round((seconds % 3600) / 60);
+    if (remainingWorkHours && distance) {
+      const remainingTimeToday = remainingTimeToSeconds(remainingWorkHours);
+      const drivingHours = calculateDrivingTime(+distance, averageSpeed);
+      const shortRest = drivingHours.duration / 8 < 1 ? 0 : Math.round(drivingHours.duration / 8);
 
-    console.log(-7);
+      const seconds = differenceInSeconds - drivingHours.durationInSeconds - remainingTimeToday;
+      const hours = Math.floor(seconds / 3600);
+      const minutes = Math.round((seconds % 3600) / 60);
 
-    console.log(hours, minutes);
+      console.log(hours, minutes);
 
-    return {
-      remainingTime: +`${hours}.${minutes}` || +`${hours}.${Math.abs(+minutes)}`,
-      drivingHours,
-      shortRest,
+      result = {
+        ...result,
+        remainingTime: +`${hours}.${minutes}` || +`${hours}.${Math.abs(+minutes)}`,
+        drivingHours,
+        shortRest,
+      };
+    }
+
+    result = {
+      ...result,
+      maxDistance: Math.floor(((differenceInSeconds / 60) / 60) * averageSpeed),
     };
   }
 
-  return null;
+  return result;
 };

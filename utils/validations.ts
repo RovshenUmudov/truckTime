@@ -107,7 +107,11 @@ export const validationCargo = yup.object().shape({
   distance: yup.number().required('This field is required').min(50, 'Min distance is 50 km'),
   longRest: yup.number().required('This field is required'),
   shortRest: yup.number().required('This field is required'),
-  remainingWorkHours: yup.number().required('This field is required').max(8, 'Max is 8 hours'),
+  remainingWorkHours: yup.string().test(
+    'is-before-max',
+    'Maximum of 8 hours',
+    (value) => new Date(`1970-01-01T${value}`) <= new Date('1970-01-01T08:00'),
+  ).required('Time is required'),
 });
 
 export const validationChangePassword = yup.object().shape({

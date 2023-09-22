@@ -49,5 +49,5 @@ export interface ICargoValues {
     distance: number | string;
     longRest: number | string;
     shortRest: number | string;
-    remainingWorkHours: number | string;
+    remainingWorkHours: string | undefined;
 }

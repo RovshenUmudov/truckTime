@@ -95,20 +95,38 @@ export const isValidTime = (value: string) => {
   return true;
 };
 
-export const roundToNearestIncrement = (num: number, increment: number) => (
-  +(Math.round(num / increment) * increment).toFixed(2)
-);
-
-export const calculateTime = (distance: number, averageSpeed: number) => {
-  const timeInHours = distance / averageSpeed;
-  const hours = Math.floor(timeInHours);
-  const minutes = Math.round((timeInHours - hours) * 60);
+export const calculateDrivingTime = (distance: number, averageSpeed: number) => {
+  const drivingTime = distance / averageSpeed;
+  const hours = Math.floor(drivingTime);
+  const minutes = Math.round((drivingTime - hours) * 60);
+  const durationInSeconds = Math.round((drivingTime * 60) * 60);
 
   return {
     duration: +`${hours}.${minutes < 10 ? `0${minutes}` : minutes}`,
     hours,
     minutes,
+    durationInSeconds,
   };
+};
+
+export const combineDateTime = (date: Date, time: string) => {
+  const timeParts = time.split(':').map(Number);
+
+  if (timeParts.length === 2) {
+    return dayjs(date).set('hour', timeParts[0]).set('minute', timeParts[1]);
+  }
+
+  return dayjs(date);
+};
+
+export const remainingTimeToSeconds = (value: string) => {
+  const parts = value.split(':');
+  const eightHours = (8 * 60 * 60);
+
+  const hours = +parts[0];
+  const minutes = +parts[1];
+
+  return eightHours - ((hours * 60) * 60) + (minutes * 60);
 };
 
 export const calculateCargo = (values: ICargoValues) => {
@@ -125,44 +143,26 @@ export const calculateCargo = (values: ICargoValues) => {
   } = values;
 
   if (remainingWorkHours && startDate && startTime && endDate && endTime && distance && averageSpeed) {
-    console.log(endDate, endTime);
+    const loadDateTime = combineDateTime(startDate, startTime);
+    const unloadDataTime = combineDateTime(endDate, endTime);
 
-    const timeParts = endTime.split(':').map(Number);
+    const remainingTime = remainingTimeToSeconds(remainingWorkHours);
+    const drivingHours = calculateDrivingTime(+distance, averageSpeed);
+    const shortRest = drivingHours.duration / 8 < 1 ? 0 : Math.round(drivingHours.duration / 8);
 
-    const unloadDataTime = dayjs(endDate).set('hour', timeParts[0]).set('minute', timeParts[1]);
-    const calculateHours = calculateTime(+distance, averageSpeed);
+    const differenceInSeconds = unloadDataTime.diff(loadDateTime, 'seconds');
 
-    console.log('calculateHours', calculateHours, 'unloadDataTime', unloadDataTime);
+    const seconds = differenceInSeconds - drivingHours.durationInSeconds - remainingTime;
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.round((seconds % 3600) / 60);
 
-    const result = unloadDataTime
-      .subtract(Math.floor(calculateHours.hours / 24), 'day')
-      .subtract(calculateHours.hours % 24, 'hour')
-      .subtract(calculateHours.minutes, 'minute')
-      .format();
+    console.log(-7);
 
-    console.log('result', result);
-
-    const days = dayjs(endDate).startOf('day').diff(dayjs(startDate).startOf('day'), 'day');
-    const hours = (((days === 1 ? 2 : days) * 8) || 8) - (8 - +remainingWorkHours);
-
-    const shortRest = calculateHours.duration / 4;
-
-    // console.log(
-    //   'days:',
-    //   days,
-    //   'hours:',
-    //   hours,
-    //   'calculatedHours:',
-    //   calculateHours,
-    //   'max distance:',
-    //   averageSpeed * hours,
-    //   'short rest:',
-    //   shortRest,
-    // );
+    console.log(hours, minutes);
 
     return {
-      remainingHours: hours,
-      calculateHours,
+      remainingTime: +`${hours}.${minutes}` || +`${hours}.${Math.abs(+minutes)}`,
+      drivingHours,
       shortRest,
     };
   }

@@ -73,15 +73,14 @@ const CargoForm: FC<ICargoForm> = ({
   useEffect(() => {
     const result = calculateCargo(formik.values);
 
-    if (result?.calculateHours === undefined || result?.remainingHours === undefined) return;
+    if (result?.drivingHours === undefined || result?.remainingTime === undefined) return;
 
-    if (result.calculateHours > result.remainingHours) {
-      setIsInvalid(true);
-    } else {
-      setIsInvalid(false);
-    }
+    setIsInvalid(result.remainingTime < 0);
+
+    console.log(result);
 
     formik.setFieldValue('shortRest', result.shortRest || '');
+    formik.setFieldValue('longRest', result.shortRest || '');
   }, [formik.values]);
 
   return (
@@ -115,12 +114,10 @@ const CargoForm: FC<ICargoForm> = ({
               placeholder="Type time"
               icon={<Clock4 className="w-4/6 h-4/6" />}
               value={formik.values.remainingWorkHours}
-              maxLength={4}
+              type="time"
               disabled={isDisable}
               helper="Type the remaining work hours for today"
-              onChange={(e) => {
-                if (isValidTime(e.target.value)) formik.handleChange(e);
-              }}
+              onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               error={formik.touched.remainingWorkHours && formik.errors.remainingWorkHours?.length ? (
                 formik.errors.remainingWorkHours
@@ -216,8 +213,7 @@ const CargoForm: FC<ICargoForm> = ({
               placeholder="Type number"
               helper="Each long rest is equal to 9 hours"
               value={formik.values.longRest}
-              disabled={isDisable}
-              maxLength={1}
+              disabled
               onChange={(e) => {
                 if (e.target.value === '' || numberRegExp.test(e.target.value)) {
                   formik.handleChange(e);

@@ -25,8 +25,8 @@ const defaultValues: ICargoValues = {
   endTime: '',
   averageSpeed: 77,
   distance: null,
-  longRest: '',
-  shortRest: '',
+  eightHoursBreak: 0,
+  oneHoursBreak: 0,
   remainingWorkHours: '',
 };
 
@@ -36,7 +36,7 @@ const CargoForm: FC<ICargoForm> = ({
 }) => {
   const { handleUnsavedChanges } = useContextUnsavedChanges();
 
-  const [error, setError] = useState<string>('');
+  const [remainingTime, setRemainingTime] = useState<string>('');
 
   const formik = useFormik<ICargoValues>({
     initialValues: initialValues || defaultValues,
@@ -59,18 +59,18 @@ const CargoForm: FC<ICargoForm> = ({
   useEffect(() => {
     const result = calculateCargo(formik.values);
 
-    console.log('result', result);
+    console.log('RESULT', result);
 
-    setError(result.error || '');
-    formik.setFieldValue('shortRest', result.shortRest || '');
+    setRemainingTime(result.remainingTime || '');
+    formik.setFieldValue('oneHoursBreak', result.oneHoursBreak || '');
   }, [formik.values]);
 
   return (
     <>
-      {error.length ? (
+      {remainingTime.length && remainingTime !== '0.00' ? (
         <Prompt
-          variant="destructive"
-          description={error}
+          variant={+remainingTime < 0 ? 'destructive' : 'default'}
+          description={`${+remainingTime < 0 ? 'You not enough time:' : 'You have enough time: +'}${remainingTime}`}
           icon={<AlertCircle className="h-4 w-4" />}
         />
       ) : null}
@@ -94,7 +94,6 @@ const CargoForm: FC<ICargoForm> = ({
               name="remainingWorkHours"
               label="Remaining Hours *"
               placeholder="Type time"
-              step="3600000"
               icon={<Clock4 className="w-4/6 h-4/6" />}
               value={formik.values.remainingWorkHours}
               type="time"
@@ -134,7 +133,6 @@ const CargoForm: FC<ICargoForm> = ({
               type="time"
               name="startTime"
               label="Start Time *"
-              step="3600000"
               placeholder="Set time"
               icon={<Clock4 className="w-4/6 h-4/6" />}
               disabled={formik.isSubmitting}
@@ -147,7 +145,6 @@ const CargoForm: FC<ICargoForm> = ({
               type="time"
               name="endTime"
               label="Unload Time *"
-              step="3600000"
               placeholder="Set time"
               icon={<Clock4 className="w-4/6 h-4/6" />}
               disabled={formik.isSubmitting}
@@ -180,28 +177,29 @@ const CargoForm: FC<ICargoForm> = ({
               name="averageSpeed"
               placeholder="Average Speed"
               label="Average Speed *"
-              disabled
               value={formik.values.averageSpeed}
+              disabled
             />
           </div>
           <div className="grid gap-5 grid-cols-2 max-[768px]:grid-cols-1">
             <Input
-              name="longRest"
-              label="Long Rest"
+              name="eightHoursBreak"
+              label="Eight Hours Break"
               icon={<Bed className="w-4/6 h-4/6" />}
-              placeholder="0"
-              helper="Each long rest is equal to 9 hours"
-              value={formik.values.longRest}
-              onChange={formik.handleChange}
-              disabled
+              helper="Each break is equal to 9 hours"
+              value={formik.values.eightHoursBreak}
+              onChange={(e) => {
+                const value = +e.target.value;
+
+                if (value <= 3) formik.handleChange(e);
+              }}
             />
             <Input
-              name="shortRest"
+              name="oneHoursBreak"
               icon={<Coffee className="w-4/6 h-4/6" />}
-              label="Short Rest"
-              helper="Each short rest is equal to 1 hour"
-              placeholder="0"
-              value={formik.values.shortRest}
+              label="One Hours Break"
+              helper="Each break is equal to 1 hour"
+              value={formik.values.oneHoursBreak}
               onChange={formik.handleChange}
               disabled
             />
@@ -210,7 +208,7 @@ const CargoForm: FC<ICargoForm> = ({
             disabled={formik.isSubmitting
                 || Object.keys(formik.errors).length > 0
                 || !formik.values.title
-                || !!error.length}
+                || +remainingTime < 0}
             className="max-w-[200px] mr-0 ml-auto"
             type="submit"
           >

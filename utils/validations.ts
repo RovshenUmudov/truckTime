@@ -101,7 +101,10 @@ export const validationCargo = yup.object().shape({
     .max(100, 'Cannot be more than 100 characters.'),
   startDate: yup.date().required('This field is required'),
   endDate: yup.date().required('This field is required'),
-  averageSpeed: yup.number().default(77).required('This field is required'),
+  averageSpeed: yup.number()
+    .default(77)
+    .required('This field is required')
+    .max(100, 'Max average speed is 100 km'),
   startTime: yup.string().required('This field is required'),
   endTime: yup.string().required('This field is required'),
   distance: yup.number().required('This field is required'),

@@ -122,58 +122,41 @@ export const calculateCargo = (values: ICargoValues) => {
     endDate,
     endTime,
     distance,
+    eightHoursBreak,
     averageSpeed,
   } = values;
 
   let result: ICalculateCargo = {
     remainingTime: null,
     drivingHours: null,
-    shortRest: null,
-    error: null,
+    oneHoursBreak: 0,
+    elevenHoursBreak: 0,
   };
 
   if (averageSpeed && startDate && startTime && endDate && endTime && remainingWorkHours) {
     const loadDateTime = combineDateTime(startDate, startTime);
     const unloadDataTime = combineDateTime(endDate, endTime);
     const differenceInSeconds = unloadDataTime.diff(loadDateTime, 'seconds');
+
     const remainingTimeInSeconds = remainingTimeToSeconds(remainingWorkHours);
     const drivingHours = calculateDrivingTime(distance || 0, averageSpeed);
-    const shortRest = +drivingHours.duration / 8 < 1 ? 0 : Math.round(+drivingHours.duration / 8);
-
-    console.log('drivingHours', drivingHours);
+    const oneHoursBreak = +drivingHours.duration / 8 < 1 ? 0 : Math.round(+drivingHours.duration / 8);
+    const elevenHoursBreak = +drivingHours.duration / 8 < 1 ? 0 : Math.floor(+drivingHours.duration / 8);
 
     const duration = moment.duration(
-      differenceInSeconds - drivingHours.durationInSeconds - remainingTimeInSeconds - (shortRest * 3600),
+      differenceInSeconds
+        - drivingHours.durationInSeconds
+        - remainingTimeInSeconds
+        - (oneHoursBreak * 3600)
+        - ((elevenHoursBreak * 39600) - (eightHoursBreak * 7200)),
       'seconds',
     );
-
-    console.log(
-      'DURATION',
-      duration.hours(),
-      duration.minutes(),
-      duration.seconds(),
-      'shortRest',
-      shortRest,
-    );
-
-    console.log('remainingTime', beatifyTime(duration.hours(), duration.minutes()));
-
-    if (duration.asSeconds() < 0) {
-      result = {
-        ...result,
-        shortRest,
-        error: 'You not enough time! You will be late',
-      };
-
-      return result;
-    }
 
     result = {
       ...result,
       remainingTime: beatifyTime(duration.hours(), duration.minutes()),
       drivingHours,
-      shortRest,
-      error: null,
+      oneHoursBreak,
     };
   }
 

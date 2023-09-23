@@ -47,8 +47,8 @@ export interface ICargoValues {
     endTime: string | undefined;
     averageSpeed: number;
     distance: number | null;
-    longRest: number | string;
-    shortRest: number | string;
+    eightHoursBreak: number;
+    oneHoursBreak: number;
     remainingWorkHours: string | undefined;
 }
 
@@ -60,8 +60,8 @@ export interface IDriving {
 }
 
 export interface ICalculateCargo {
-    remainingTime: number |string| null;
+    remainingTime: string | null;
     drivingHours: IDriving | null;
-    shortRest: number | null;
-    error: string | null;
+    oneHoursBreak: number;
+    elevenHoursBreak: number;
 }

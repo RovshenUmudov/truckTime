@@ -30,7 +30,7 @@ const MainLogo: FC<IMainLogo> = ({ darkMode = false }) => {
             });
           }
         }}
-        className="flex items-center text-lg font-medium"
+        className="flex items-center text-lg font-medium max-[768px]:text-[14px]"
       >
         <Hourglass className="mr-2" />
         Track Time

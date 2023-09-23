@@ -204,7 +204,10 @@ const CargoForm: FC<ICargoForm> = ({
             />
           </div>
           <Button
-            disabled={formik.isSubmitting || Object.keys(formik.errors).length > 0 || !formik.values.title}
+            disabled={formik.isSubmitting
+                || Object.keys(formik.errors).length > 0
+                || !formik.values.title
+                || !!error.length}
             className="max-w-[200px] mr-0 ml-auto"
             type="submit"
           >

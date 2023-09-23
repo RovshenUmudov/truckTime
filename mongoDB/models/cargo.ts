@@ -9,8 +9,8 @@ const cargoSchema = new Schema({
   endTime: { type: String, required: true },
   averageSpeed: { type: Number, required: true },
   distance: { type: String, required: true },
-  longRest: { type: Number, required: false },
-  shortRest: { type: Number, required: false },
+  eightHoursBreak: { type: Number, required: false },
+  oneHoursBreak: { type: Number, required: false },
   remainingWorkHours: { type: String, required: false },
 });
 

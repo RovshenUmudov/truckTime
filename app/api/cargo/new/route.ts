@@ -39,8 +39,8 @@ export async function POST(req: Request) {
       endTime: body.endTime,
       averageSpeed: body.averageSpeed,
       distance: body.distance,
-      longRest: body.longRest,
-      shortRest: body.shortRest,
+      eightHoursBreak: body.eightHoursBreak,
+      oneHoursBreak: body.oneHoursBreak,
       remainingWorkHours: body.remainingWorkHours,
     });
 

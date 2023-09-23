@@ -84,6 +84,10 @@ input[type="time"]::-webkit-datetime-edit-ampm-field {
   display: none !important;
 }
 
+input[type="time"]::datetime-edit-field {
+  display: none !important;
+}
+
 input[type="time"] {
   -webkit-appearance: none;
 }

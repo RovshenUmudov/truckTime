@@ -154,7 +154,7 @@ const CargoForm: FC<ICargoForm> = ({
               error={formik.touched.endTime && formik.errors.endTime?.length ? formik.errors.endTime : null}
             />
           </div>
-          <div className="grid gap-5 grid-cols-[1fr_170px]">
+          <div className="grid gap-5 grid-cols-[1fr_170px] max-[768px]:grid-cols-1">
             <Input
               prefix="km"
               name="distance"

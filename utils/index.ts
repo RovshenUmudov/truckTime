@@ -1,10 +1,11 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import dayjs from 'dayjs';
 import { ICalculateCargo, ICargoValues } from '@/types';
+import moment from 'moment';
 
 export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
+const eightHoursInSeconds = 8 * 3600;
 
 export const capitalizeFirstLetter = (str: string): string => str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
 
@@ -27,11 +28,11 @@ export const createJWT = (userId: string) => {
   return {
     access: {
       token,
-      expiresIn: dayjs().add(tokenExpiresIn, 'second').format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+      expiresIn: moment().add(tokenExpiresIn, 'second').format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
     },
     refresh: {
       token: refreshToken,
-      expiresIn: dayjs().add(refreshTokenExpiresIn, 'second').format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+      expiresIn: moment().add(refreshTokenExpiresIn, 'second').format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
     },
   };
 };
@@ -56,9 +57,6 @@ export function isObjEqual<T>(object1: T, object2: T): boolean {
   const keys1 = Object.keys(object1);
   const keys2 = Object.keys(object2);
 
-  // cannot simply compare key-array lengths as lengths could be same while the keys themselves differ
-  // cannot skip this check either and just check the values of all keys concatenated
-  // because { "key": undefined }["key"] and {}["key"] would equal incorrectly
   // eslint-disable-next-line no-restricted-syntax
   for (const k of keys1) if (!keys2.includes(k)) return false;
   // eslint-disable-next-line no-restricted-syntax
@@ -79,54 +77,41 @@ export const asyncDelay = (ms: number) => new Promise((resolve) => {
 export const numberRegExp = /^[0-9]*$/;
 export const floatNumberRegExp = /^[0-9.]*$/;
 
-export const isValidTime = (value: string) => {
-  if (value.length && (!floatNumberRegExp.test(value) || value === '.' || +value > 8)) {
-    return false;
-  }
-
-  if (value.includes('.')) {
-    const paths = value.split('.');
-
-    if (parseInt(paths[1], 10) > 59) {
-      return false;
-    }
-  }
-
-  return true;
-};
-
 export const calculateDrivingTime = (distance: number, averageSpeed: number) => {
-  const drivingTime = distance / averageSpeed;
-  const hours = Math.floor(drivingTime);
-  const minutes = Math.round((drivingTime - hours) * 60);
-  const durationInSeconds = Math.round((drivingTime * 60) * 60);
+  const drivingSeconds = (distance / averageSpeed) * 3600;
+  const duration = moment.duration(drivingSeconds, 'seconds');
 
   return {
-    duration: +`${hours}.${minutes < 10 ? `0${minutes}` : minutes}`,
-    hours,
-    minutes,
-    durationInSeconds,
+    duration: beatifyTime(duration.hours(), duration.minutes()),
+    hours: duration.hours(),
+    minutes: duration.minutes(),
+    durationInSeconds: duration.asSeconds(),
   };
 };
 
 export const combineDateTime = (date: Date, time: string) => {
   const timeParts = time.split(':').map(Number);
 
+  let dateTime = moment(date).format('YYYY-MM-DD HH:mm:ss');
+
   if (timeParts.length === 2) {
-    return dayjs(date).set('hour', timeParts[0]).set('minute', timeParts[1]);
+    dateTime = moment(date)
+      .hours(timeParts[0])
+      .minutes(timeParts[1])
+      .seconds(0)
+      .format('YYYY-MM-DD HH:mm:ss');
   }
 
-  return dayjs(date);
+  return moment(dateTime);
 };
 
 export const remainingTimeToSeconds = (value: string) => {
   const parts = value.split(':');
-  const eightHours = (8 * 60 * 60);
 
   const hours = +parts[0];
   const minutes = +parts[1];
 
-  return eightHours - ((hours * 60) * 60) + (minutes * 60);
+  return eightHoursInSeconds - (hours * 3600) + (minutes * 60);
 };
 
 export const calculateCargo = (values: ICargoValues) => {
@@ -144,38 +129,61 @@ export const calculateCargo = (values: ICargoValues) => {
     remainingTime: null,
     drivingHours: null,
     shortRest: null,
-    maxDistance: null,
+    error: null,
   };
 
-  if (averageSpeed && startDate && startTime && endDate && endTime) {
+  if (averageSpeed && startDate && startTime && endDate && endTime && remainingWorkHours) {
     const loadDateTime = combineDateTime(startDate, startTime);
     const unloadDataTime = combineDateTime(endDate, endTime);
     const differenceInSeconds = unloadDataTime.diff(loadDateTime, 'seconds');
+    const remainingTimeInSeconds = remainingTimeToSeconds(remainingWorkHours);
+    const drivingHours = calculateDrivingTime(distance || 0, averageSpeed);
+    const shortRest = +drivingHours.duration / 8 < 1 ? 0 : Math.round(+drivingHours.duration / 8);
 
-    if (remainingWorkHours && distance) {
-      const remainingTimeToday = remainingTimeToSeconds(remainingWorkHours);
-      const drivingHours = calculateDrivingTime(+distance, averageSpeed);
-      const shortRest = drivingHours.duration / 8 < 1 ? 0 : Math.round(drivingHours.duration / 8);
+    console.log('drivingHours', drivingHours);
 
-      const seconds = differenceInSeconds - drivingHours.durationInSeconds - remainingTimeToday;
-      const hours = Math.floor(seconds / 3600);
-      const minutes = Math.round((seconds % 3600) / 60);
+    const duration = moment.duration(
+      differenceInSeconds - drivingHours.durationInSeconds - remainingTimeInSeconds - (shortRest * 3600),
+      'seconds',
+    );
 
-      console.log(hours, minutes);
+    console.log(
+      'DURATION',
+      duration.hours(),
+      duration.minutes(),
+      duration.seconds(),
+      'shortRest',
+      shortRest,
+    );
 
+    console.log('remainingTime', beatifyTime(duration.hours(), duration.minutes()));
+
+    if (duration.asSeconds() < 0) {
       result = {
         ...result,
-        remainingTime: +`${hours}.${minutes}` || +`${hours}.${Math.abs(+minutes)}`,
-        drivingHours,
         shortRest,
+        error: 'You not enough time! You will be late',
       };
+
+      return result;
     }
 
     result = {
       ...result,
-      maxDistance: Math.floor(((differenceInSeconds / 60) / 60) * averageSpeed),
+      remainingTime: beatifyTime(duration.hours(), duration.minutes()),
+      drivingHours,
+      shortRest,
+      error: null,
     };
   }
 
   return result;
+};
+
+export const beatifyTime = (hours: number, minutes: number) => {
+  if (minutes >= 0) {
+    return `${hours}.${minutes < 10 ? `0${minutes}` : minutes}`;
+  }
+
+  return `${hours < 0 || minutes < 0 ? '-' : ''}${Math.abs(hours)}.${Math.abs(minutes)}`;
 };

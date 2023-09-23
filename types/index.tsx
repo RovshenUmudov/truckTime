@@ -53,15 +53,15 @@ export interface ICargoValues {
 }
 
 export interface IDriving {
-    duration: number;
+    duration: string;
     durationInSeconds: number;
     hours: number;
     minutes: number;
 }
 
 export interface ICalculateCargo {
-    remainingTime: number | null;
+    remainingTime: number |string| null;
     drivingHours: IDriving | null;
     shortRest: number | null;
-    maxDistance: number | null;
+    error: string | null;
 }

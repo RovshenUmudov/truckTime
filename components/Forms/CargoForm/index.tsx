@@ -36,8 +36,7 @@ const CargoForm: FC<ICargoForm> = ({
 }) => {
   const { handleUnsavedChanges } = useContextUnsavedChanges();
 
-  const [isInvalid, setIsInvalid] = useState<boolean>(false);
-  const [maxDistance, setMaxDistance] = useState<number>(0);
+  const [error, setError] = useState<string>('');
 
   const formik = useFormik<ICargoValues>({
     initialValues: initialValues || defaultValues,
@@ -60,23 +59,18 @@ const CargoForm: FC<ICargoForm> = ({
   useEffect(() => {
     const result = calculateCargo(formik.values);
 
-    setMaxDistance(result.maxDistance || 0);
-    console.log(result);
+    console.log('result', result);
 
-    if (result?.drivingHours === null || result?.remainingTime === null) return;
-
-    setIsInvalid(result.remainingTime < 0);
-
+    setError(result.error || '');
     formik.setFieldValue('shortRest', result.shortRest || '');
-    formik.setFieldValue('longRest', result.shortRest || '');
   }, [formik.values]);
 
   return (
     <>
-      {isInvalid ? (
+      {error.length ? (
         <Prompt
           variant="destructive"
-          description="Your calculation is invalid."
+          description={error}
           icon={<AlertCircle className="h-4 w-4" />}
         />
       ) : null}
@@ -139,6 +133,7 @@ const CargoForm: FC<ICargoForm> = ({
               type="time"
               name="startTime"
               label="Start Time *"
+              placeholder="Set time"
               icon={<Clock4 className="w-4/6 h-4/6" />}
               disabled={formik.isSubmitting}
               value={formik.values.startTime}
@@ -150,6 +145,7 @@ const CargoForm: FC<ICargoForm> = ({
               type="time"
               name="endTime"
               label="Unload Time *"
+              placeholder="Set time"
               icon={<Clock4 className="w-4/6 h-4/6" />}
               disabled={formik.isSubmitting}
               value={formik.values.endTime}
@@ -168,7 +164,6 @@ const CargoForm: FC<ICargoForm> = ({
               value={formik.values.distance || ''}
               maxLength={5}
               min={1}
-              helper={maxDistance > 0 ? `Max distance is: ${maxDistance} km` : ''}
               onChange={(e) => {
                 if (e.target.value === '' || (numberRegExp.test(e.target.value) && +e.target.value > 0)) {
                   formik.handleChange(e);

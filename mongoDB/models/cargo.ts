@@ -1,6 +1,7 @@
 import mongoose, { models, Schema } from 'mongoose';
 
 const cargoSchema = new Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, required: true },
   title: { type: String, required: true },
   startDate: { type: Date, required: true },
   startTime: { type: String, required: true },
@@ -13,6 +14,6 @@ const cargoSchema = new Schema({
   remainingWorkHours: { type: String, required: false },
 });
 
-const Cargo = models.User || mongoose.model('User', cargoSchema);
+const Cargo = models.Cargo || mongoose.model('Cargo', cargoSchema);
 
 export default Cargo;

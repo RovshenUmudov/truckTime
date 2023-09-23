@@ -94,6 +94,7 @@ const CargoForm: FC<ICargoForm> = ({
               name="remainingWorkHours"
               label="Remaining Hours *"
               placeholder="Type time"
+              pattern="[0-9]{2}:[0-9]{2}"
               icon={<Clock4 className="w-4/6 h-4/6" />}
               value={formik.values.remainingWorkHours}
               type="time"
@@ -133,6 +134,7 @@ const CargoForm: FC<ICargoForm> = ({
               type="time"
               name="startTime"
               label="Start Time *"
+              pattern="[0-9]{2}:[0-9]{2}"
               placeholder="Set time"
               icon={<Clock4 className="w-4/6 h-4/6" />}
               disabled={formik.isSubmitting}
@@ -145,6 +147,7 @@ const CargoForm: FC<ICargoForm> = ({
               type="time"
               name="endTime"
               label="Unload Time *"
+              pattern="[0-9]{2}:[0-9]{2}"
               placeholder="Set time"
               icon={<Clock4 className="w-4/6 h-4/6" />}
               disabled={formik.isSubmitting}

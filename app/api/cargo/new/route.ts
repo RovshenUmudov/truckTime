@@ -4,7 +4,7 @@ import { ICargoValues } from '@/types';
 import { connectMongoDB } from '@/mongoDB/mongodb';
 import User from '@/mongoDB/models/user';
 
-export const getUser = async (token: string | null) => {
+const getUser = async (token: string | null) => {
   if (!token) {
     return new Response(JSON.stringify({ message: 'Unauthorized' }), { status: 401 });
   }

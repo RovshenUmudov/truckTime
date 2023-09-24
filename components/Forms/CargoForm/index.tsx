@@ -128,6 +128,7 @@ const CargoForm: FC<ICargoForm> = ({
               disabled={formik.isSubmitting}
               value={formik.values.unloadDate}
               onBlur={formik.handleBlur}
+              fromDate={formik.values.startDate}
               onChange={(date: Date | undefined) => formik.setFieldValue('unloadDate', date)}
               error={formik.touched.unloadDate && formik.errors.unloadDate?.length ? formik.errors.unloadDate : null}
             />

@@ -15,6 +15,7 @@ interface IDatePicker {
     onChange: (payload: Date | undefined) => void;
     error?: string | null;
     value: Date | undefined;
+    fromDate?: Date | undefined;
     label?: string;
     disabled?: boolean;
     onBlur: (e: { target: { name: string; }; }) => void;
@@ -28,6 +29,7 @@ const DatePicker: FC<IDatePicker> = ({
   placeholder = 'Pick a date',
   disabled = false,
   error,
+  fromDate = new Date(),
   onBlur,
 }) => (
   <div>
@@ -51,7 +53,7 @@ const DatePicker: FC<IDatePicker> = ({
           mode="single"
           selected={value}
           onSelect={onChange}
-          fromDate={new Date()}
+          fromDate={fromDate}
           onDayBlur={() => onBlur({ target: { name } })}
         />
       </PopoverContent>

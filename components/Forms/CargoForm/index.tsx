@@ -20,7 +20,7 @@ interface ICargoForm {
 
 const defaultValues: ICargoValues = {
   title: '',
-  startDate: moment().format(),
+  startDate: moment().set({ hour: 0, minutes: 0, second: 0, millisecond: 0 }).format('YYYY-MM-DDTHH:mm:ssZ'),
   startTime: '',
   unloadDate: undefined,
   unloadTime: '',
@@ -48,6 +48,11 @@ const CargoForm: FC<ICargoForm> = ({
   });
 
   useEffect(() => {
+    const result = calculateCargo(formik.values);
+
+    setState(result || null);
+    formik.setFieldValue('oneHoursBreak', result.oneHoursBreak);
+
     if (!isObjEqual(formik.values, initialValues || defaultValues)) {
       handleUnsavedChanges(true);
 
@@ -55,15 +60,6 @@ const CargoForm: FC<ICargoForm> = ({
     }
 
     handleUnsavedChanges(false);
-  }, [formik.values]);
-
-  useEffect(() => {
-    const result = calculateCargo(formik.values);
-
-    console.log('RESULT', result);
-
-    setState(result || null);
-    formik.setFieldValue('oneHoursBreak', result.oneHoursBreak || '');
   }, [formik.values]);
 
   return (
@@ -121,7 +117,7 @@ const CargoForm: FC<ICargoForm> = ({
               disabled={formik.isSubmitting}
               value={moment(formik.values.startDate).toDate()}
               onBlur={formik.handleBlur}
-              onChange={(date: Date | undefined) => formik.setFieldValue('startDate', date)}
+              onChange={(date: Date | undefined) => formik.setFieldValue('startDate', moment(date).format())}
               error={formik.touched.startDate && formik.errors.startDate?.length ? formik.errors.startDate : null}
             />
             <DatePicker
@@ -132,7 +128,7 @@ const CargoForm: FC<ICargoForm> = ({
               value={formik.values.unloadDate ? moment(formik.values.unloadDate).toDate() : undefined}
               onBlur={formik.handleBlur}
               fromDate={moment(formik.values.startDate).toDate()}
-              onChange={(date: Date | undefined) => formik.setFieldValue('unloadDate', date)}
+              onChange={(date: Date | undefined) => formik.setFieldValue('unloadDate', moment(date).format())}
               error={formik.touched.unloadDate && formik.errors.unloadDate?.length ? formik.errors.unloadDate : null}
             />
           </div>
@@ -207,7 +203,7 @@ const CargoForm: FC<ICargoForm> = ({
               label="One Hours Break"
               placeholder="0"
               helper="Each break is equal to 1 hour"
-              value={formik.values.oneHoursBreak}
+              value={formik.values.oneHoursBreak || 0}
               onChange={formik.handleChange}
               disabled
             />

@@ -26,6 +26,7 @@
   },
   "plugins": ["@typescript-eslint", "react", "jest", "prettier", "sort-imports-es6-autofix"],
   "rules": {
+    "no-underscore-dangle": ["error", { "allow": ["_id"] }],
     "react/require-default-props": ["error", { "ignoreFunctionalComponents": true }],
     "camelcase": "off",
     "max-len": ["error", { "code": 120 }],

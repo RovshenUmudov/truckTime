@@ -1,7 +1,7 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import { ICalculateCargo, ICargoValues, ITime } from '@/types';
+import { ICalculateCargo, ICargo, ITime } from '@/types';
 import moment from 'moment';
 
 export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
@@ -124,7 +124,7 @@ export const remainingTimeToSeconds = (value: string) => {
   return eightHoursInSeconds - (hours * 3600) + (minutes * 60);
 };
 
-export const calculateCargo = (values: ICargoValues) => {
+export const calculateCargo = (values: ICargo) => {
   const {
     remainingWorkHours,
     startDate,

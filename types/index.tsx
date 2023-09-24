@@ -39,7 +39,9 @@ export interface IUserMe {
     imageURL?: string;
 }
 
-export interface ICargoValues {
+export interface ICargo {
+    _id?: string;
+    userId?: string;
     title: string;
     startDate: string | undefined;
     startTime: string | undefined;
@@ -62,4 +64,8 @@ export interface ICalculateCargo {
     duration: ITime | null;
     oneHoursBreak: number;
     elevenHoursBreak: number;
+}
+
+export interface IParams {
+    params: { id: string; };
 }

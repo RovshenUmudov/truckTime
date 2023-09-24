@@ -2,7 +2,7 @@ import { FC } from 'react';
 import Banner from '@/components/Banner';
 import Header from '@/components/Header';
 import Container from '@/components/Container';
-import Content from '@/app/new-cargo/Content';
+import Content from '@/app/cargo/new/Content';
 
 const NewCargo: FC = () => (
   <>

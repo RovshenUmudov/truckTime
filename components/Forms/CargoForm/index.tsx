@@ -1,6 +1,6 @@
 'use client';
 
-import React, { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { AlertCircle, Bed, Clock4, Coffee, Loader2 } from 'lucide-react';
@@ -8,17 +8,17 @@ import { useFormik } from 'formik';
 import { validationCargo } from '@/utils/validations';
 import DatePicker from '@/components/ui/Pickers/DataPicker';
 import { beatifyTime, calculateCargo, eightHoursBreakCountRegExp, isObjEqual, numberRegExp } from '@/utils';
-import { ICalculateCargo, ICargoValues } from '@/types';
+import { ICalculateCargo, ICargo } from '@/types';
 import { useContextUnsavedChanges } from '@/context/unsavedChanges';
 import Prompt from '@/components/Prompt';
 import moment from 'moment';
 
-interface ICargoForm {
-  initialValues?: ICargoValues;
-  handleSubmit: (values: ICargoValues, setSubmitting: (isSubmitting: boolean) => void) => void;
+interface ICargoProps {
+  initialValues?: ICargo;
+  handleSubmit: (values: ICargo, setSubmitting: (isSubmitting: boolean) => void) => void;
 }
 
-const defaultValues: ICargoValues = {
+const defaultValues: ICargo = {
   title: '',
   startDate: moment().set({ hour: 0, minutes: 0, second: 0, millisecond: 0 }).format('YYYY-MM-DDTHH:mm:ssZ'),
   startTime: '',
@@ -31,7 +31,7 @@ const defaultValues: ICargoValues = {
   remainingWorkHours: '',
 };
 
-const CargoForm: FC<ICargoForm> = ({
+const CargoForm: FC<ICargoProps> = ({
   initialValues,
   handleSubmit,
 }) => {
@@ -39,7 +39,7 @@ const CargoForm: FC<ICargoForm> = ({
 
   const [state, setState] = useState<ICalculateCargo | null>(null);
 
-  const formik = useFormik<ICargoValues>({
+  const formik = useFormik<ICargo>({
     initialValues: initialValues || defaultValues,
     validationSchema: validationCargo,
     onSubmit: (values, { setSubmitting }) => {
@@ -216,7 +216,7 @@ const CargoForm: FC<ICargoForm> = ({
             type="submit"
           >
             {formik.isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-            Create
+            {initialValues ? 'Save' : 'Create'}
           </Button>
         </div>
       </form>

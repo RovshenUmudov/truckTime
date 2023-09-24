@@ -7,8 +7,8 @@ import { AlertCircle, Bed, Clock4, Coffee, Loader2 } from 'lucide-react';
 import { useFormik } from 'formik';
 import { validationCargo } from '@/utils/validations';
 import DatePicker from '@/components/ui/Pickers/DataPicker';
-import { calculateCargo, isObjEqual, numberRegExp } from '@/utils';
-import { ICargoValues } from '@/types';
+import { beatifyTime, calculateCargo, isObjEqual, numberRegExp } from '@/utils';
+import { ICalculateCargo, ICargoValues } from '@/types';
 import { useContextUnsavedChanges } from '@/context/unsavedChanges';
 import Prompt from '@/components/Prompt';
 
@@ -21,8 +21,8 @@ const defaultValues: ICargoValues = {
   title: '',
   startDate: new Date(),
   startTime: '',
-  endDate: undefined,
-  endTime: '',
+  unloadDate: undefined,
+  unloadTime: '',
   averageSpeed: 77,
   distance: null,
   eightHoursBreak: 0,
@@ -36,7 +36,7 @@ const CargoForm: FC<ICargoForm> = ({
 }) => {
   const { handleUnsavedChanges } = useContextUnsavedChanges();
 
-  const [remainingTime, setRemainingTime] = useState<string>('');
+  const [state, setState] = useState<ICalculateCargo | null>(null);
 
   const formik = useFormik<ICargoValues>({
     initialValues: initialValues || defaultValues,
@@ -61,19 +61,23 @@ const CargoForm: FC<ICargoForm> = ({
 
     console.log('RESULT', result);
 
-    setRemainingTime(result.remainingTime || '');
+    setState(result || null);
     formik.setFieldValue('oneHoursBreak', result.oneHoursBreak || '');
   }, [formik.values]);
 
   return (
     <>
-      {remainingTime.length && remainingTime !== '0.00' ? (
-        <Prompt
-          variant={+remainingTime < 0 ? 'destructive' : 'default'}
-          description={`${+remainingTime < 0 ? 'You not enough time:' : 'You have enough time: +'}${remainingTime}`}
-          icon={<AlertCircle className="h-4 w-4" />}
-        />
-      ) : null}
+      {state?.remainingTime
+        && state?.driving
+        && state.driving.durationInSeconds > 0 ? (
+          <Prompt
+            variant={state.remainingTime.hours < 0 || state.remainingTime.minutes < 0 ? 'destructive' : 'default'}
+            description={`${state.remainingTime.hours < 0 || state.remainingTime.minutes < 0 ? (
+              'You not enough time: ') : 'You have enough time: '}
+              ${beatifyTime(state.remainingTime)}`}
+            icon={<AlertCircle className="h-4 w-4" />}
+          />
+        ) : null}
       <form onSubmit={formik.handleSubmit}>
         <div className="grid gap-5">
           <div className="grid gap-5 grid-cols-2 max-[768px]:grid-cols-1">
@@ -118,14 +122,14 @@ const CargoForm: FC<ICargoForm> = ({
               error={formik.touched.startDate && formik.errors.startDate?.length ? formik.errors.startDate : null}
             />
             <DatePicker
-              name="endDate"
+              name="unloadDate"
               label="Unload Date *"
               placeholder="Pick unload date"
               disabled={formik.isSubmitting}
-              value={formik.values.endDate}
+              value={formik.values.unloadDate}
               onBlur={formik.handleBlur}
-              onChange={(date: Date | undefined) => formik.setFieldValue('endDate', date)}
-              error={formik.touched.endDate && formik.errors.endDate?.length ? formik.errors.endDate : null}
+              onChange={(date: Date | undefined) => formik.setFieldValue('unloadDate', date)}
+              error={formik.touched.unloadDate && formik.errors.unloadDate?.length ? formik.errors.unloadDate : null}
             />
           </div>
           <div className="grid gap-5 grid-cols-2 max-[768px]:grid-cols-1">
@@ -143,15 +147,15 @@ const CargoForm: FC<ICargoForm> = ({
             />
             <Input
               type="time"
-              name="endTime"
+              name="unloadTime"
               label="Unload Time *"
               placeholder="Set time"
               icon={<Clock4 className="w-4/6 h-4/6" />}
               disabled={formik.isSubmitting}
-              value={formik.values.endTime}
+              value={formik.values.unloadTime}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              error={formik.touched.endTime && formik.errors.endTime?.length ? formik.errors.endTime : null}
+              error={formik.touched.unloadTime && formik.errors.unloadTime?.length ? formik.errors.unloadTime : null}
             />
           </div>
           <div className="grid gap-5 grid-cols-[1fr_170px] max-[768px]:grid-cols-1">
@@ -185,6 +189,7 @@ const CargoForm: FC<ICargoForm> = ({
             <Input
               name="eightHoursBreak"
               label="Eight Hours Break"
+              placeholder="0"
               icon={<Bed className="w-4/6 h-4/6" />}
               helper="Each break is equal to 9 hours"
               value={formik.values.eightHoursBreak}
@@ -198,6 +203,7 @@ const CargoForm: FC<ICargoForm> = ({
               name="oneHoursBreak"
               icon={<Coffee className="w-4/6 h-4/6" />}
               label="One Hours Break"
+              placeholder="0"
               helper="Each break is equal to 1 hour"
               value={formik.values.oneHoursBreak}
               onChange={formik.handleChange}
@@ -208,7 +214,7 @@ const CargoForm: FC<ICargoForm> = ({
             disabled={formik.isSubmitting
                 || Object.keys(formik.errors).length > 0
                 || !formik.values.title
-                || +remainingTime < 0}
+                || !!state?.remainingTime}
             className="max-w-[200px] mr-0 ml-auto"
             type="submit"
           >

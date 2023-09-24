@@ -43,8 +43,8 @@ export interface ICargoValues {
     title: string;
     startDate: Date | undefined;
     startTime: string | undefined;
-    endDate: Date | undefined;
-    endTime: string | undefined;
+    unloadDate: Date | undefined;
+    unloadTime: string | undefined;
     averageSpeed: number;
     distance: number | null;
     eightHoursBreak: number;
@@ -52,16 +52,14 @@ export interface ICargoValues {
     remainingWorkHours: string | undefined;
 }
 
-export interface IDriving {
-    duration: string;
-    durationInSeconds: number;
-    hours: number;
-    minutes: number;
-}
+export type ITime = { hours: number; minutes: number; }
+
+export type IDriving = ITime & {durationInSeconds: number;}
 
 export interface ICalculateCargo {
-    remainingTime: string | null;
-    drivingHours: IDriving | null;
+    remainingTime: ITime | null;
+    driving: IDriving | null;
+    duration: ITime | null;
     oneHoursBreak: number;
     elevenHoursBreak: number;
 }

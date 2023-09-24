@@ -1,7 +1,7 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import { ICalculateCargo, ICargoValues } from '@/types';
+import { ICalculateCargo, ICargoValues, ITime } from '@/types';
 import moment from 'moment';
 
 export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
@@ -75,17 +75,25 @@ export const asyncDelay = (ms: number) => new Promise((resolve) => {
 });
 
 export const numberRegExp = /^[0-9]*$/;
-export const floatNumberRegExp = /^[0-9.]*$/;
-
 export const calculateDrivingTime = (distance: number, averageSpeed: number) => {
   const drivingSeconds = (distance / averageSpeed) * 3600;
   const duration = moment.duration(drivingSeconds, 'seconds');
 
   return {
-    duration: beatifyTime(duration.hours(), duration.minutes()),
-    hours: duration.hours(),
-    minutes: duration.minutes(),
-    durationInSeconds: duration.asSeconds(),
+    ...formatTime({
+      hours: duration.days() * 24 + duration.hours() || 0,
+      minutes: duration.minutes() || 0,
+    }),
+    durationInSeconds: duration.asSeconds() || 0,
+  };
+};
+
+export const calculateBreaks = (seconds: number) => {
+  const breaks = (seconds / 3600) / 8;
+
+  return {
+    oneHoursBreak: breaks < 1 ? 0 : Math.round(breaks),
+    elevenHoursBreak: breaks < 1 ? 0 : Math.floor(breaks),
   };
 };
 
@@ -128,7 +136,8 @@ export const calculateCargo = (values: ICargoValues) => {
 
   let result: ICalculateCargo = {
     remainingTime: null,
-    drivingHours: null,
+    driving: null,
+    duration: null,
     oneHoursBreak: 0,
     elevenHoursBreak: 0,
   };
@@ -138,15 +147,16 @@ export const calculateCargo = (values: ICargoValues) => {
     const unloadDataTime = combineDateTime(endDate, endTime);
     const differenceInSeconds = unloadDataTime.diff(loadDateTime, 'seconds');
 
-    const remainingTimeInSeconds = remainingTimeToSeconds(remainingWorkHours);
-    const drivingHours = calculateDrivingTime(distance || 0, averageSpeed);
-    const oneHoursBreak = +drivingHours.duration / 8 < 1 ? 0 : Math.round(+drivingHours.duration / 8);
-    const elevenHoursBreak = +drivingHours.duration / 8 < 1 ? 0 : Math.floor(+drivingHours.duration / 8);
+    const remainingTimeTodayInSeconds = remainingTimeToSeconds(remainingWorkHours);
+    const driving = calculateDrivingTime(distance || 0, averageSpeed);
+    const { oneHoursBreak, elevenHoursBreak } = calculateBreaks(driving.durationInSeconds);
+
+    const totalDuration = moment.duration(differenceInSeconds, 'seconds');
 
     const duration = moment.duration(
       differenceInSeconds
-        - drivingHours.durationInSeconds
-        - remainingTimeInSeconds
+        - driving.durationInSeconds
+        - remainingTimeTodayInSeconds
         - (oneHoursBreak * 3600)
         - ((elevenHoursBreak * 39600) - (eightHoursBreak * 7200)),
       'seconds',
@@ -154,8 +164,15 @@ export const calculateCargo = (values: ICargoValues) => {
 
     result = {
       ...result,
-      remainingTime: beatifyTime(duration.hours(), duration.minutes()),
-      drivingHours,
+      duration: formatTime({
+        hours: totalDuration.days() * 24 + totalDuration.hours(),
+        minutes: totalDuration.minutes(),
+      }),
+      remainingTime: formatTime({
+        hours: duration.days() * 24 + duration.hours(),
+        minutes: duration.minutes(),
+      }),
+      driving,
       oneHoursBreak,
     };
   }
@@ -163,10 +180,16 @@ export const calculateCargo = (values: ICargoValues) => {
   return result;
 };
 
-export const beatifyTime = (hours: number, minutes: number) => {
-  if (minutes >= 0) {
-    return `${hours}.${minutes < 10 ? `0${minutes}` : minutes}`;
-  }
+export const formatTime = ({ hours, minutes }: ITime) => ({
+  hours,
+  minutes: hours < 0 ? Math.abs(minutes) : minutes,
+});
 
-  return `${hours < 0 || minutes < 0 ? '-' : ''}${Math.abs(hours)}.${Math.abs(minutes)}`;
+export const beatifyTime = ({ hours, minutes }: ITime) => {
+  const hoursPrefix = Math.abs(hours) > 1 ? 'hours' : 'hour';
+  const minutesPrefix = Math.abs(minutes) > 1 ? 'minutes' : 'minutes';
+  const sign = hours < 0 || minutes < 0 ? '-' : '+';
+
+  return `${sign} ${Math.abs(hours) ? `${`${Math.abs(hours)} ${hoursPrefix}`}` : ''}
+  ${Math.abs(minutes) > 0 ? `${`${Math.abs(minutes)} ${minutesPrefix}`}` : ''}`;
 };

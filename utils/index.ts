@@ -127,8 +127,8 @@ export const calculateCargo = (values: ICargoValues) => {
     remainingWorkHours,
     startDate,
     startTime,
-    endDate,
-    endTime,
+    unloadDate,
+    unloadTime,
     distance,
     eightHoursBreak,
     averageSpeed,
@@ -142,9 +142,9 @@ export const calculateCargo = (values: ICargoValues) => {
     elevenHoursBreak: 0,
   };
 
-  if (averageSpeed && startDate && startTime && endDate && endTime && remainingWorkHours) {
+  if (averageSpeed && startDate && startTime && unloadDate && unloadTime && remainingWorkHours) {
     const loadDateTime = combineDateTime(startDate, startTime);
-    const unloadDataTime = combineDateTime(endDate, endTime);
+    const unloadDataTime = combineDateTime(unloadDate, unloadTime);
     const differenceInSeconds = unloadDataTime.diff(loadDateTime, 'seconds');
 
     const remainingTimeTodayInSeconds = remainingTimeToSeconds(remainingWorkHours);

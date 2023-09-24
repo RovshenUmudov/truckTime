@@ -49,6 +49,6 @@ export default withAuth(
 
 export const config = {
   matcher: [
-    '/', '/login', '/sign-up/:path*',
+    '/', '/new-cargo', '/login', '/sign-up/:path*',
   ],
 };

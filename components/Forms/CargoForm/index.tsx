@@ -7,10 +7,11 @@ import { AlertCircle, Bed, Clock4, Coffee, Loader2 } from 'lucide-react';
 import { useFormik } from 'formik';
 import { validationCargo } from '@/utils/validations';
 import DatePicker from '@/components/ui/Pickers/DataPicker';
-import { beatifyTime, calculateCargo, isObjEqual, numberRegExp } from '@/utils';
+import { beatifyTime, calculateCargo, eightHoursBreakCountRegExp, isObjEqual, numberRegExp } from '@/utils';
 import { ICalculateCargo, ICargoValues } from '@/types';
 import { useContextUnsavedChanges } from '@/context/unsavedChanges';
 import Prompt from '@/components/Prompt';
+import moment from 'moment';
 
 interface ICargoForm {
   initialValues?: ICargoValues;
@@ -19,7 +20,7 @@ interface ICargoForm {
 
 const defaultValues: ICargoValues = {
   title: '',
-  startDate: new Date(),
+  startDate: moment().format(),
   startTime: '',
   unloadDate: undefined,
   unloadTime: '',
@@ -69,7 +70,9 @@ const CargoForm: FC<ICargoForm> = ({
     <>
       {state?.remainingTime
         && state?.driving
-        && state.driving.durationInSeconds > 0 ? (
+        && state.driving.durationInSeconds > 0
+        && !(state.remainingTime.hours === 0 && state.remainingTime.minutes === 0)
+        ? (
           <Prompt
             variant={state.remainingTime.hours < 0 || state.remainingTime.minutes < 0 ? 'destructive' : 'default'}
             description={`${state.remainingTime.hours < 0 || state.remainingTime.minutes < 0 ? (
@@ -116,7 +119,7 @@ const CargoForm: FC<ICargoForm> = ({
               label="Start Date *"
               placeholder="Pick start date"
               disabled={formik.isSubmitting}
-              value={formik.values.startDate}
+              value={moment(formik.values.startDate).toDate()}
               onBlur={formik.handleBlur}
               onChange={(date: Date | undefined) => formik.setFieldValue('startDate', date)}
               error={formik.touched.startDate && formik.errors.startDate?.length ? formik.errors.startDate : null}
@@ -126,9 +129,9 @@ const CargoForm: FC<ICargoForm> = ({
               label="Unload Date *"
               placeholder="Pick unload date"
               disabled={formik.isSubmitting}
-              value={formik.values.unloadDate}
+              value={formik.values.unloadDate ? moment(formik.values.unloadDate).toDate() : undefined}
               onBlur={formik.handleBlur}
-              fromDate={formik.values.startDate}
+              fromDate={moment(formik.values.startDate).toDate()}
               onChange={(date: Date | undefined) => formik.setFieldValue('unloadDate', date)}
               error={formik.touched.unloadDate && formik.errors.unloadDate?.length ? formik.errors.unloadDate : null}
             />
@@ -195,9 +198,7 @@ const CargoForm: FC<ICargoForm> = ({
               helper="Each break is equal to 9 hours"
               value={formik.values.eightHoursBreak}
               onChange={(e) => {
-                const value = +e.target.value;
-
-                if (value <= 3) formik.handleChange(e);
+                if (eightHoursBreakCountRegExp.test(e.target.value) || e.target.value === '') formik.handleChange(e);
               }}
             />
             <Input
@@ -214,8 +215,7 @@ const CargoForm: FC<ICargoForm> = ({
           <Button
             disabled={formik.isSubmitting
                 || Object.keys(formik.errors).length > 0
-                || !formik.values.title
-                || !!state?.remainingTime}
+                || !formik.values.title}
             className="max-w-[200px] mr-0 ml-auto"
             type="submit"
           >

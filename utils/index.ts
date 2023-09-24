@@ -75,6 +75,8 @@ export const asyncDelay = (ms: number) => new Promise((resolve) => {
 });
 
 export const numberRegExp = /^[0-9]*$/;
+export const eightHoursBreakCountRegExp = /^[0-3]$/;
+
 export const calculateDrivingTime = (distance: number, averageSpeed: number) => {
   const drivingSeconds = (distance / averageSpeed) * 3600;
   const duration = moment.duration(drivingSeconds, 'seconds');
@@ -97,7 +99,7 @@ export const calculateBreaks = (seconds: number) => {
   };
 };
 
-export const combineDateTime = (date: Date, time: string) => {
+export const combineDateTime = (date: string, time: string) => {
   const timeParts = time.split(':').map(Number);
 
   let dateTime = moment(date).format('YYYY-MM-DD HH:mm:ss');
@@ -192,4 +194,18 @@ export const beatifyTime = ({ hours, minutes }: ITime) => {
 
   return `${sign} ${Math.abs(hours) ? `${`${Math.abs(hours)} ${hoursPrefix}`}` : ''}
   ${Math.abs(minutes) > 0 ? `${`${Math.abs(minutes)} ${minutesPrefix}`}` : ''}`;
+};
+
+export const splitTimeStr = (time: string): ITime => {
+  const parts = time.split(':').map(Number);
+
+  if (parts.length === 2) {
+    return {
+      hours: parts[0] || 0,
+      minutes: parts[1] || 0,
+      second: 0,
+    };
+  }
+
+  return { hours: 0, minutes: 0, second: 0 };
 };

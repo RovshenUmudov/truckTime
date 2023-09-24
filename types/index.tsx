@@ -41,9 +41,9 @@ export interface IUserMe {
 
 export interface ICargoValues {
     title: string;
-    startDate: Date | undefined;
+    startDate: string | undefined;
     startTime: string | undefined;
-    unloadDate: Date | undefined;
+    unloadDate: string | undefined;
     unloadTime: string | undefined;
     averageSpeed: number;
     distance: number | null;
@@ -52,7 +52,7 @@ export interface ICargoValues {
     remainingWorkHours: string | undefined;
 }
 
-export type ITime = { hours: number; minutes: number; }
+export type ITime = { hours: number; minutes: number; second?: number; }
 
 export type IDriving = ITime & {durationInSeconds: number;}
 

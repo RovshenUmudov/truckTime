@@ -48,7 +48,7 @@ const Input = React.forwardRef<HTMLInputElement, IInputProps>(
           {...props}
         />
         {prefix || icon ? (
-          <div className="absolute right-2 h-full flex top-0 items-center text-placeholder gap-2">
+          <div className="absolute right-3 h-full flex top-0 items-center text-placeholder gap-2 max-w-[50px]">
             {prefix ? <div className="text-[13px]">{prefix}</div> : null}
             {icon || null}
           </div>

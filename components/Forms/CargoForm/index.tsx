@@ -105,7 +105,7 @@ const CargoForm: FC<ICargoProps> = ({
               name="remainingWorkHours"
               label="Remaining Hours *"
               placeholder="Type time"
-              icon={<Clock4 className="w-4/6 h-4/6" />}
+              icon={<Clock4 className="w-4 h-4" />}
               value={formik.values.remainingWorkHours}
               type="time"
               disabled={formik.isSubmitting}
@@ -146,7 +146,7 @@ const CargoForm: FC<ICargoProps> = ({
               name="startTime"
               label="Start Time *"
               placeholder="Set time"
-              icon={<Clock4 className="w-4/6 h-4/6" />}
+              icon={<Clock4 className="w-4 h-4" />}
               disabled={formik.isSubmitting}
               value={formik.values.startTime}
               onChange={formik.handleChange}
@@ -158,7 +158,7 @@ const CargoForm: FC<ICargoProps> = ({
               name="unloadTime"
               label="Unload Time *"
               placeholder="Set time"
-              icon={<Clock4 className="w-4/6 h-4/6" />}
+              icon={<Clock4 className="w-4 h-4" />}
               disabled={formik.isSubmitting}
               value={formik.values.unloadTime}
               onChange={formik.handleChange}
@@ -197,7 +197,7 @@ const CargoForm: FC<ICargoProps> = ({
               name="eightHoursBreak"
               label="Eight Hours Break"
               placeholder="0"
-              icon={<Bed className="w-4/6 h-4/6" />}
+              icon={<Bed className="w-4 h-4" />}
               helper="Each break is equal to 9 hours"
               value={formik.values.eightHoursBreak}
               onChange={(e) => {
@@ -206,7 +206,7 @@ const CargoForm: FC<ICargoProps> = ({
             />
             <Input
               name="oneHoursBreak"
-              icon={<Coffee className="w-4/6 h-4/6" />}
+              icon={<Coffee className="w-4 h-4" />}
               label="One Hours Break"
               placeholder="0"
               helper="Each break is equal to 1 hour"

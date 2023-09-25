@@ -7,6 +7,7 @@ import { IParams } from '@/types';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/auth/authOptions';
 import { getCargoById } from '@/app/cargo/[id]/requests';
+import PageTitle from '@/components/ui/Title';
 
 const SingleCargo: FC<IParams> = async ({ params }) => {
   const session = await getServerSession(authOptions);
@@ -18,7 +19,7 @@ const SingleCargo: FC<IParams> = async ({ params }) => {
       <Container>
         <Banner src="/single-cargo.jpg" />
         <div className="max-w-[700px] mt-5">
-          <h2 className="text-3xl font-bold mb-5">Edit cargo</h2>
+          <PageTitle title="Edit cargo" />
           <Content data={cargo.data || null} />
         </div>
       </Container>

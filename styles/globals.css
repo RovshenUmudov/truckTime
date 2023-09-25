@@ -95,3 +95,8 @@ input[type="time"] {
 input[type="time"]::-webkit-calendar-picker-indicator {
   background: none;
 }
+
+input {
+  text-align: left;
+  text-align: -webkit-left;
+}

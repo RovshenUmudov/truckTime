@@ -92,6 +92,10 @@ input[type="time"] {
   -webkit-appearance: none;
 }
 
+input::-webkit-date-and-time-value {
+  text-align: left;
+}
+
 input[type="time"]::-webkit-calendar-picker-indicator {
   background: none;
 }

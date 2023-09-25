@@ -187,12 +187,12 @@ export const formatTime = ({ hours, minutes }: ITime) => ({
   minutes: hours < 0 ? Math.abs(minutes) : minutes,
 });
 
-export const beatifyTime = ({ hours, minutes }: ITime) => {
+export const beatifyTime = ({ hours, minutes }: ITime, withSign = true) => {
   const hoursPrefix = Math.abs(hours) > 1 ? 'hours' : 'hour';
   const minutesPrefix = Math.abs(minutes) > 1 ? 'minutes' : 'minutes';
   const sign = hours < 0 || minutes < 0 ? '-' : '+';
 
-  return `${sign} ${Math.abs(hours) ? `${`${Math.abs(hours)} ${hoursPrefix}`}` : ''}
+  return `${withSign ? sign : ''} ${Math.abs(hours) ? `${`${Math.abs(hours)} ${hoursPrefix}`}` : ''}
   ${Math.abs(minutes) > 0 ? `${`${Math.abs(minutes)} ${minutesPrefix}`}` : ''}`;
 };
 

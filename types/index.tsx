@@ -1,3 +1,5 @@
+import mongoose from 'mongoose';
+
 export interface IErrorResponse {
     statusCode: number;
     message: string | string[];
@@ -40,8 +42,8 @@ export interface IUserMe {
 }
 
 export interface ICargo {
-    _id?: string;
-    userId?: string;
+    _id?: string | mongoose.Schema.Types.ObjectId;
+    userId?: string | mongoose.Schema.Types.ObjectId;
     title: string;
     startDate: string | undefined;
     startTime: string | undefined;
@@ -52,6 +54,9 @@ export interface ICargo {
     eightHoursBreak: number;
     oneHoursBreak: number;
     remainingWorkHours: string | undefined;
+    remainingTime: ITime | null;
+    driving: IDriving | null;
+    duration: ITime | null;
 }
 
 export type ITime = { hours: number; minutes: number; second?: number; }

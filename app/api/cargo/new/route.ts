@@ -24,6 +24,9 @@ export async function POST(req: Request) {
       eightHoursBreak: body.eightHoursBreak,
       oneHoursBreak: body.oneHoursBreak,
       remainingWorkHours: body.remainingWorkHours,
+      driving: body.driving,
+      remainingTime: body.remainingTime,
+      duration: body.duration,
     });
 
     return new Response(JSON.stringify(newCargo), { status: 200 });

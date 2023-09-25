@@ -1,4 +1,22 @@
 import mongoose, { models, Schema } from 'mongoose';
+import { IDriving, ITime } from '@/types';
+
+interface ICargoModel extends Document {
+  userId: mongoose.Schema.Types.ObjectId;
+  title: string;
+  startDate: string;
+  startTime: string;
+  unloadDate: string;
+  unloadTime: string;
+  averageSpeed: number;
+  distance: number;
+  eightHoursBreak: number;
+  oneHoursBreak: number;
+  remainingWorkHours: number;
+  remainingTime: ITime;
+  driving: IDriving;
+  duration: ITime;
+}
 
 const cargoSchema = new Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, required: true },
@@ -12,8 +30,33 @@ const cargoSchema = new Schema({
   eightHoursBreak: { type: Number, required: false },
   oneHoursBreak: { type: Number, required: false },
   remainingWorkHours: { type: String, required: false },
+  remainingTime: {
+    type: {
+      hours: Number,
+      minutes: Number,
+      second: { type: Number, required: false },
+    },
+    required: true,
+  },
+  driving: {
+    type: {
+      hours: Number,
+      minutes: Number,
+      second: { type: Number, required: false },
+      durationInSeconds: Number,
+    },
+    required: true,
+  },
+  duration: {
+    type: {
+      hours: Number,
+      minutes: Number,
+      second: { type: Number, required: false },
+    },
+    required: true,
+  },
 });
 
-const Cargo = models.Cargo || mongoose.model('Cargo', cargoSchema);
+const Cargo = models.Cargo<ICargoModel> || mongoose.model<ICargoModel>('Cargo', cargoSchema);
 
 export default Cargo;

@@ -30,6 +30,9 @@ const defaultValues: ICargo = {
   eightHoursBreak: 0,
   oneHoursBreak: 0,
   remainingWorkHours: '',
+  remainingTime: null,
+  driving: null,
+  duration: null,
 };
 
 const CargoForm: FC<ICargoProps> = ({
@@ -45,7 +48,7 @@ const CargoForm: FC<ICargoProps> = ({
     initialValues: initialValues || defaultValues,
     validationSchema: validationCargo,
     onSubmit: (values, { setSubmitting }) => {
-      handleSubmit(values, setSubmitting);
+      handleSubmit({ ...values, ...state }, setSubmitting);
     },
   });
 

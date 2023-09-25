@@ -2,20 +2,25 @@ import { connectMongoDB } from '@/mongoDB/mongodb';
 import User from '@/mongoDB/models/user';
 import { decodedJWT } from '@/utils';
 
+export async function authenticateUser(req: Request) {
+  const token = req.headers.get('Authorization');
+
+  if (!token) {
+    return null;
+  }
+
+  const jwtToken = token.replace('Bearer ', '');
+  const decodedToken = decodedJWT(jwtToken);
+
+  await connectMongoDB();
+  const user = await User.findOne({ _id: decodedToken.id });
+
+  return user;
+}
+
 export async function GET(req: Request) {
   try {
-    const token = req.headers.get('Authorization');
-
-    if (!token) {
-      return new Response(JSON.stringify({ message: 'Token not found' }), { status: 404 });
-    }
-    const jwtToken = token.replace('Bearer ', '');
-
-    const decodedToken = decodedJWT(jwtToken);
-
-    await connectMongoDB();
-
-    const user = await User.findOne({ _id: decodedToken.id });
+    const user = await authenticateUser(req);
 
     if (!user) {
       return new Response(JSON.stringify({ message: 'User not found' }), { status: 404 });

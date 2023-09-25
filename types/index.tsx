@@ -42,8 +42,8 @@ export interface IUserMe {
 }
 
 export interface ICargo {
-    _id?: string | mongoose.Schema.Types.ObjectId;
-    userId?: string | mongoose.Schema.Types.ObjectId;
+    _id?: string;
+    userId?: string;
     title: string;
     startDate: string | undefined;
     startTime: string | undefined;

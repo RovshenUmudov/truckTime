@@ -3,6 +3,11 @@ import Header from '@/components/Header';
 import Container from '@/components/Container';
 import Banner from '@/components/Banner';
 import CargoList from '@/components/CargoList';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Cargos',
+};
 
 const Cargos: FC = () => (
   <>

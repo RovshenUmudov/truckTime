@@ -4,6 +4,11 @@ import Header from '@/components/Header';
 import Container from '@/components/Container';
 import Content from '@/app/cargos/new/Content';
 import PageTitle from '@/components/ui/Title';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Cargo - New',
+};
 
 const NewCargo: FC = () => (
   <>

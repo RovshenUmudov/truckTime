@@ -9,6 +9,11 @@ import { authOptions } from '@/utils/auth/authOptions';
 import { getCargoById } from '@/app/cargos/[id]/requests';
 import PageTitle from '@/components/ui/Title';
 import { redirect } from 'next/navigation';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Cargo - Edit',
+};
 
 const SingleCargo: FC<IParams> = async ({ params }) => {
   const session = await getServerSession(authOptions);

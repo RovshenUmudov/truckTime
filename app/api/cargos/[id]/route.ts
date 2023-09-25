@@ -1,5 +1,3 @@
-import { decodedJWT } from '@/utils';
-import User from '@/mongoDB/models/user';
 import { ICargo } from '@/types';
 import Cargo from '@/mongoDB/models/cargo';
 import { authenticateUser } from '@/app/api/users/me/route';

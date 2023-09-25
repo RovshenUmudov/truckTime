@@ -7,7 +7,7 @@ import moment from 'moment';
 import { beatifyTime } from '@/utils';
 
 const CargoItem: FC<{data: ICargo;}> = ({ data }) => (
-  <Link href={`/cargo/${data._id}`}>
+  <Link href={`/cargos/${data._id}`}>
     <Card>
       <CardHeader>
         <CardTitle>{data.title}</CardTitle>

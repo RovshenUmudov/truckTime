@@ -20,9 +20,9 @@ export default withAuth(
       return NextResponse.redirect(new URL('/login', req.url));
     }
 
-    if (req.nextUrl.pathname === '/cargo') {
-      return NextResponse.redirect(new URL('/', req.url));
-    }
+    // if (req.nextUrl.pathname === '/cargos') {
+    //   return NextResponse.redirect(new URL('/', req.url));
+    // }
 
     // Auth pages:
     /** Prevent user from visiting auth pages if he is authorized */
@@ -53,6 +53,6 @@ export default withAuth(
 
 export const config = {
   matcher: [
-    '/', '/cargo/new', '/cargo', '/login', '/sign-up/:path*',
+    '/', '/cargos/new', '/cargos', '/login', '/sign-up/:path*',
   ],
 };

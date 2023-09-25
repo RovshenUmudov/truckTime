@@ -5,12 +5,14 @@ import { authenticateUser } from '@/app/api/users/me/route';
 export async function GET(req: Request) {
   try {
     const user = await authenticateUser(req);
+    const { searchParams } = new URL(req.url);
+    const limit = searchParams.get('limit');
 
     if (!user) {
       return new Response(JSON.stringify({ message: 'User not found' }), { status: 401 });
     }
 
-    const cargos: ICargo[] = await Cargo.find({ userId: user.get('_id') });
+    const cargos: ICargo[] = await Cargo.find({ userId: user.get('_id') }).limit(parseInt(limit || '-1', 10));
 
     return new Response(JSON.stringify(cargos), { status: 200 });
   } catch (e) {

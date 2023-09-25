@@ -2,11 +2,11 @@ import { FC } from 'react';
 import Banner from '@/components/Banner';
 import Header from '@/components/Header';
 import Container from '@/components/Container';
-import Content from '@/app/cargo/[id]/Content';
+import Content from '@/app/cargos/[id]/Content';
 import { IParams } from '@/types';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/auth/authOptions';
-import { getCargoById } from '@/app/cargo/[id]/requests';
+import { getCargoById } from '@/app/cargos/[id]/requests';
 import PageTitle from '@/components/ui/Title';
 import { redirect } from 'next/navigation';
 

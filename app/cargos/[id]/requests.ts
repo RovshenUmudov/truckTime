@@ -3,7 +3,7 @@ import { ICargo } from '@/types';
 
 export async function getCargoById(id: string, token: string) {
   const res = await fetchAPI<ICargo, undefined>(
-    `/cargo/${id}`,
+    `/cargos/${id}`,
     undefined,
     {
       method: 'GET',
@@ -16,7 +16,7 @@ export async function getCargoById(id: string, token: string) {
 
 export async function updateCargoById(token: string, data: ICargo) {
   const res = await fetchAPI<ICargo, undefined, ICargo>(
-    `/cargo/${data._id}`,
+    `/cargos/${data._id}`,
     undefined,
     {
       method: 'POST',
@@ -30,7 +30,7 @@ export async function updateCargoById(token: string, data: ICargo) {
 
 export async function deleteCargo(token: string, id: string) {
   const res = await fetchAPI(
-    `/cargo/${id}`,
+    `/cargos/${id}`,
     undefined,
     {
       method: 'DELETE',

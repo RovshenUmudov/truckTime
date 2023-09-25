@@ -7,8 +7,7 @@ import { useSession } from 'next-auth/react';
 import useNotify from '@/hooks/notify';
 import moment from 'moment';
 import { splitTimeStr } from '@/utils';
-import { updateCargoById } from '@/app/cargo/[id]/requests';
-import { useContextUnsavedChanges } from '@/context/unsavedChanges';
+import { deleteCargo, updateCargoById } from '@/app/cargo/[id]/requests';
 import { useRouter } from 'next/navigation';
 
 interface IEditCargoContent {
@@ -17,8 +16,7 @@ interface IEditCargoContent {
 
 const EditCargoContent: FC<IEditCargoContent> = ({ data }) => {
   const { data: session } = useSession();
-  const { handleUnsavedChanges } = useContextUnsavedChanges();
-  const { error, success } = useNotify();
+  const { error, success, confirm } = useNotify();
   const router = useRouter();
   const [, startTransition] = useTransition();
   const handleSubmit = async (values: ICargo, setSubmitting: (isSubmitting: boolean) => void) => {
@@ -34,7 +32,6 @@ const EditCargoContent: FC<IEditCargoContent> = ({ data }) => {
     const res = await updateCargoById(session?.tokens?.access.token || '', newValues);
 
     setSubmitting(false);
-    handleUnsavedChanges(false);
 
     if (res.error) {
       error(res.error.message);
@@ -46,8 +43,29 @@ const EditCargoContent: FC<IEditCargoContent> = ({ data }) => {
     startTransition(() => { router.refresh(); router.push('/'); });
   };
 
+  const deleteHandler = async () => {
+    const res = await deleteCargo(session?.tokens?.access.token || '', data?._id || '');
+
+    if (res.error) {
+      error(res.error.message);
+
+      return;
+    }
+
+    success('Deleted successfully');
+    startTransition(() => { router.refresh(); router.push('/'); });
+  };
+
+  const handleDelete = () => {
+    confirm(deleteHandler, 'Delete confirmation', 'Are you sure you want to delete cargo?');
+  };
+
   return (
-    <CargoForm handleSubmit={handleSubmit} initialValues={data || undefined} />
+    <CargoForm
+      handleSubmit={handleSubmit}
+      handleDelete={handleDelete}
+      initialValues={data || undefined}
+    />
   );
 };
 

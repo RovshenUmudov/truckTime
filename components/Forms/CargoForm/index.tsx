@@ -16,6 +16,7 @@ import moment from 'moment';
 interface ICargoProps {
   initialValues?: ICargo;
   handleSubmit: (values: ICargo, setSubmitting: (isSubmitting: boolean) => void) => void;
+  handleDelete?: () => void;
 }
 
 const defaultValues: ICargo = {
@@ -34,6 +35,7 @@ const defaultValues: ICargo = {
 const CargoForm: FC<ICargoProps> = ({
   initialValues,
   handleSubmit,
+  handleDelete,
 }) => {
   const { handleUnsavedChanges } = useContextUnsavedChanges();
 
@@ -208,16 +210,22 @@ const CargoForm: FC<ICargoProps> = ({
               disabled
             />
           </div>
-          <Button
-            disabled={formik.isSubmitting
-                || Object.keys(formik.errors).length > 0
-                || !formik.values.title}
-            className="max-w-[200px] mr-0 ml-auto"
-            type="submit"
-          >
-            {formik.isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-            {initialValues ? 'Save' : 'Create'}
-          </Button>
+          <div className="flex justify-end gap-5">
+            {initialValues ? (
+              <Button variant="destructive" className="max-w-[200px]" type="button" onClick={handleDelete}>
+                {formik.isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                Delete
+              </Button>
+            ) : null}
+            <Button
+              disabled={formik.isSubmitting || Object.keys(formik.errors).length > 0 || !formik.values.title}
+              className="max-w-[200px]"
+              type="submit"
+            >
+              {formik.isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+              {initialValues ? 'Save' : 'Create'}
+            </Button>
+          </div>
         </div>
       </form>
     </>

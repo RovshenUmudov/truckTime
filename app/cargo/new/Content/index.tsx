@@ -34,7 +34,6 @@ const NewCargoContent: FC = () => {
     });
 
     setSubmitting(false);
-    handleUnsavedChanges(false);
 
     if (res.error) {
       error(res.error.message);

@@ -27,3 +27,16 @@ export async function updateCargoById(token: string, data: ICargo) {
 
   return res;
 }
+
+export async function deleteCargo(token: string, id: string) {
+  const res = await fetchAPI(
+    `/cargo/${id}`,
+    undefined,
+    {
+      method: 'DELETE',
+      accessToken: token,
+    },
+  );
+
+  return res;
+}

@@ -6,24 +6,25 @@ const useNotify = () => {
   const { toast } = useToast();
 
   const error = (message: string | string[] | undefined) => {
-    toast({ title: 'Error!', description: getMessageInError(message), variant: 'destructive' });
+    toast({ title: 'Error!', description: getMessageInError(message), variant: 'destructive', duration: 2000 });
   };
 
   const success = (message: string | string[] | undefined) => {
-    toast({ title: 'Successfully!', description: message, variant: 'default' });
+    toast({ title: 'Successfully!', description: message, variant: 'default', duration: 2000 });
   };
 
-  const confirm = (handleLeave: () => void, message?: string) => {
+  const confirm = (handleLeave: () => void, title?: string, message?: string, actionText?: string) => {
     toast({
-      title: 'Unsaved changes!',
+      title: title || 'Unsaved changes!',
       description: message || 'You have unsaved changes, still want to leave?',
       variant: 'default',
+      duration: 5000,
       action: (
         <ToastAction
-          altText="Leave"
+          altText={actionText || 'Leave'}
           onClick={handleLeave}
         >
-          Leave
+          {actionText || 'Leave'}
         </ToastAction>
       ),
     });

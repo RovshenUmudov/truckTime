@@ -51,3 +51,22 @@ export async function POST(req: Request) {
     return new Response(JSON.stringify({ message: `Server error: ${e}` }), { status: 500 });
   }
 }
+
+export async function DELETE(req: Request) {
+  try {
+    const user = await authenticateUser(req);
+
+    if (!user) {
+      return new Response(JSON.stringify({ message: 'User not found' }), { status: 401 });
+    }
+
+    const { url } = req;
+    const cargoId = new URL(url).pathname.split('/').filter(Boolean).pop();
+
+    await Cargo.deleteOne({ _id: cargoId || '' });
+
+    return new Response(JSON.stringify({ message: `Cargo with id ${cargoId} was deleted` }), { status: 200 });
+  } catch (e) {
+    return new Response(JSON.stringify({ message: `Server error: ${e}` }), { status: 500 });
+  }
+}

@@ -10,12 +10,12 @@ const Home: FC = () => (
   <>
     <Header />
     <Container>
-      <Banner src="/banner.jpg" />
+      <Banner src="/banner-5.jpg" />
       <LinkButton
         label="New Cargo Transportation"
         href="/cargos/new"
         icon={<Truck className="mr-2" />}
-        className="mb-5"
+        className="mb-4"
       />
       <CargoList limit={6} title="Recent cargo transportation" />
     </Container>

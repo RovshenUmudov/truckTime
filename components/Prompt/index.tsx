@@ -18,7 +18,7 @@ const Prompt: FC<IPrompt> = ({
   description,
   variant,
 }) => (
-  <Alert className="mb-4" variant={variant}>
+  <Alert className="mb-5" variant={variant}>
     {icon}
     {title ? <AlertTitle>{title}</AlertTitle> : null}
     <AlertDescription>

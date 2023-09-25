@@ -15,7 +15,7 @@ const NewCargo: FC = () => (
     <Header />
     <Container>
       <Banner src="/new-cargo-banner.jpg" />
-      <div className="max-w-[700px] mt-5">
+      <div className="max-w-[700px] mb-5">
         <PageTitle title="Create new cargo" />
         <Content />
       </div>

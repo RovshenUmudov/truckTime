@@ -26,7 +26,7 @@ const SingleCargo: FC<IParams> = async ({ params }) => {
       <Header />
       <Container>
         <Banner src="/single-cargo.jpg" />
-        <div className="max-w-[700px] mt-5">
+        <div className="max-w-[700px] mb-5">
           <PageTitle title="Edit cargo" />
           <Content data={cargo.data || null} />
         </div>

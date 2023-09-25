@@ -12,7 +12,6 @@ import { ICalculateCargo, ICargo } from '@/types';
 import { useContextUnsavedChanges } from '@/context/unsavedChanges';
 import Prompt from '@/components/Prompt';
 import moment from 'moment';
-import { useSession } from 'next-auth/react';
 
 interface ICargoProps {
   initialValues?: ICargo;
@@ -44,7 +43,6 @@ const CargoForm: FC<ICargoProps> = ({
   averageSpeed,
 }) => {
   const { handleUnsavedChanges } = useContextUnsavedChanges();
-  const { data: session } = useSession();
   const [state, setState] = useState<ICalculateCargo | null>(null);
 
   const formik = useFormik<ICargo>({

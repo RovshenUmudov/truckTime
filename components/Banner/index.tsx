@@ -6,14 +6,14 @@ interface IBanner {
 }
 
 const Banner: FC<IBanner> = ({ src }) => (
-  <div className="h-[250px] max-[1300px]:pt-[30%] max-[1300px]:h-auto relative overflow-hidden rounded-md">
+  <div className="h-[250px] max-[992px]:h-[200px] relative overflow-hidden rounded-md">
     <Image
       src={src}
       alt="banner"
       fill
       priority
-      className="!h-auto max-[1300px]:!h-full"
-      sizes="(min-width: 1920px) 100vw"
+      className="!h-auto max-[1300px]:!h-full max-[1250px]:!max-w-none max-[1250px]:!w-auto"
+      sizes="(max-width: 992px) 950px, (min-width: 1440px) 1360px"
       quality={90}
     />
   </div>

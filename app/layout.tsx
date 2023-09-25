@@ -14,12 +14,12 @@ const poppins = Poppins({
 
 export const metadata: Metadata = {
   title: 'Track Time',
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 1,
-    userScalable: false,
-  },
+  // viewport: {
+  //   width: 'device-width',
+  //   initialScale: 1,
+  //   maximumScale: 1,
+  //   userScalable: false,
+  // },
   robots: {
     index: false,
     follow: false,

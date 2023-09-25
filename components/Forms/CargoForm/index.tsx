@@ -213,7 +213,6 @@ const CargoForm: FC<ICargoProps> = ({
           <div className="flex justify-end gap-5">
             {initialValues ? (
               <Button variant="destructive" className="max-w-[200px]" type="button" onClick={handleDelete}>
-                {formik.isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                 Delete
               </Button>
             ) : null}

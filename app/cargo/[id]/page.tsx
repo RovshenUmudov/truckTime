@@ -8,10 +8,13 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/auth/authOptions';
 import { getCargoById } from '@/app/cargo/[id]/requests';
 import PageTitle from '@/components/ui/Title';
+import { redirect } from 'next/navigation';
 
 const SingleCargo: FC<IParams> = async ({ params }) => {
   const session = await getServerSession(authOptions);
   const cargo = await getCargoById(params.id, session?.tokens?.access.token || '');
+
+  if (!cargo.data) redirect('/');
 
   return (
     <>

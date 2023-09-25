@@ -57,7 +57,7 @@ const EditCargoContent: FC<IEditCargoContent> = ({ data }) => {
   };
 
   const handleDelete = () => {
-    confirm(deleteHandler, 'Delete confirmation', 'Are you sure you want to delete cargo?');
+    confirm(deleteHandler, 'Delete confirmation', 'Are you sure you want to delete cargo?', 'Delete');
   };
 
   return (

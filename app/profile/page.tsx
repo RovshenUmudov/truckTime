@@ -15,7 +15,7 @@ const Profile: FC = async () => {
   const session = await getServerSession(authOptions);
 
   if (!session?.user) {
-    return;
+    return null;
   }
 
   return (

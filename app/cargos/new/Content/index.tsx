@@ -30,7 +30,7 @@ const NewCargoContent: FC<INewCargoContent> = ({ averageSpeed }) => {
       unloadDate: moment(values.unloadDate).set(unloadTime).format(),
     };
 
-    const res = await fetchAPI('/cargo/new', undefined, {
+    const res = await fetchAPI('/cargos/new', undefined, {
       method: 'POST',
       accessToken: session?.tokens?.access.token || '',
       body: newValues,

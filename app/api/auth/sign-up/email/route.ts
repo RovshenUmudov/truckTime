@@ -17,7 +17,7 @@ export async function POST(req: Request) {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = await User.create({ email, password: hashedPassword });
+    const user = await User.create({ email, password: hashedPassword, averageSpeed: 77 });
     const tokens = createJWT(user.id);
 
     return new Response(JSON.stringify(tokens), { status: 200 });

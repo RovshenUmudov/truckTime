@@ -26,7 +26,31 @@ export async function GET(req: Request) {
       return new Response(JSON.stringify({ message: 'User not found' }), { status: 404 });
     }
 
-    return new Response(JSON.stringify({ id: user.get('_id'), email: user.get('email') }), { status: 200 });
+    return new Response(JSON.stringify({
+      id: user.get('_id'),
+      email: user.get('email'),
+      averageSpeed: user.get('averageSpeed'),
+    }), { status: 200 });
+  } catch (e) {
+    return new Response(JSON.stringify({ message: `Server error: ${e}` }), { status: 500 });
+  }
+}
+
+export async function POST(req: Request) {
+  try {
+    const user = await authenticateUser(req);
+
+    if (!user) {
+      return new Response(JSON.stringify({ message: 'User not found' }), { status: 404 });
+    }
+
+    const body = await req.json();
+
+    await User.updateOne({ _id: user.get('_id') }, body);
+
+    const updatedUser = await User.findOne({ _id: user.get('_id') });
+
+    return new Response(JSON.stringify(updatedUser), { status: 200 });
   } catch (e) {
     return new Response(JSON.stringify({ message: `Server error: ${e}` }), { status: 500 });
   }

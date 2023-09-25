@@ -115,6 +115,13 @@ export const validationCargo = yup.object().shape({
   ).required('Time is required'),
 });
 
+export const validationProfile = yup.object().shape({
+  averageSpeed: yup.number()
+    .required('This field is required')
+    .min(1, 'Min average speed is 1 km')
+    .max(100, 'Max average speed is 100 km'),
+});
+
 export const validationChangePassword = yup.object().shape({
   currentPassword: password,
   password,

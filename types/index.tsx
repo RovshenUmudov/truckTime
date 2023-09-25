@@ -1,5 +1,3 @@
-import mongoose from 'mongoose';
-
 export interface IErrorResponse {
     statusCode: number;
     message: string | string[];
@@ -39,6 +37,7 @@ export interface IUserMe {
     id: string;
     email: string;
     imageURL?: string;
+    averageSpeed: number;
 }
 
 export interface ICargo {

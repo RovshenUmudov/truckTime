@@ -6,7 +6,7 @@ interface IBanner {
 }
 
 const Banner: FC<IBanner> = ({ src }) => (
-  <div className="h-[250px] max-[1250px]:h-auto relative overflow-hidden rounded-md mb-5">
+  <div className="h-[250px] max-[1250px]:h-auto relative overflow-hidden rounded-md mb-5 max-[768px]:mb-4">
     <Image
       src={src}
       alt="banner"

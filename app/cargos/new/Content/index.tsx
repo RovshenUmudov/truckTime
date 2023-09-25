@@ -8,15 +8,18 @@ import { useSession } from 'next-auth/react';
 import useNotify from '@/hooks/notify';
 import moment from 'moment';
 import { splitTimeStr } from '@/utils';
-import { useContextUnsavedChanges } from '@/context/unsavedChanges';
 import { useRouter } from 'next/navigation';
 
-const NewCargoContent: FC = () => {
+interface INewCargoContent {
+  averageSpeed: number;
+}
+
+const NewCargoContent: FC<INewCargoContent> = ({ averageSpeed }) => {
   const { data: session } = useSession();
-  const { handleUnsavedChanges } = useContextUnsavedChanges();
   const { error, success } = useNotify();
   const router = useRouter();
   const [, startTransition] = useTransition();
+
   const handleSubmit = async (values: ICargo, setSubmitting: (isSubmitting: boolean) => void) => {
     const startTime = splitTimeStr(values.startTime || '');
     const unloadTime = splitTimeStr(values.unloadTime || '');
@@ -46,7 +49,7 @@ const NewCargoContent: FC = () => {
   };
 
   return (
-    <CargoForm handleSubmit={handleSubmit} />
+    <CargoForm handleSubmit={handleSubmit} averageSpeed={averageSpeed} />
   );
 };
 

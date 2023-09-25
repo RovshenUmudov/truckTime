@@ -12,11 +12,13 @@ import { ICalculateCargo, ICargo } from '@/types';
 import { useContextUnsavedChanges } from '@/context/unsavedChanges';
 import Prompt from '@/components/Prompt';
 import moment from 'moment';
+import { useSession } from 'next-auth/react';
 
 interface ICargoProps {
   initialValues?: ICargo;
   handleSubmit: (values: ICargo, setSubmitting: (isSubmitting: boolean) => void) => void;
   handleDelete?: () => void;
+  averageSpeed?: number;
 }
 
 const defaultValues: ICargo = {
@@ -39,9 +41,10 @@ const CargoForm: FC<ICargoProps> = ({
   initialValues,
   handleSubmit,
   handleDelete,
+  averageSpeed,
 }) => {
   const { handleUnsavedChanges } = useContextUnsavedChanges();
-
+  const { data: session } = useSession();
   const [state, setState] = useState<ICalculateCargo | null>(null);
 
   const formik = useFormik<ICargo>({
@@ -184,9 +187,8 @@ const CargoForm: FC<ICargoProps> = ({
             <Input
               prefix="km/h"
               name="averageSpeed"
-              placeholder="Average Speed"
               label="Average Speed *"
-              value={formik.values.averageSpeed}
+              value={averageSpeed || formik.values.averageSpeed}
               disabled
             />
           </div>

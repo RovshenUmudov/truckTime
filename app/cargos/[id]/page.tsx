@@ -12,7 +12,7 @@ import { redirect } from 'next/navigation';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Cargo - Edit',
+  title: 'Cargo transportation - Edit',
 };
 
 const SingleCargo: FC<IParams> = async ({ params }) => {
@@ -27,7 +27,7 @@ const SingleCargo: FC<IParams> = async ({ params }) => {
       <Container>
         <Banner src="/single-cargo.jpg" />
         <div className="max-w-[700px] mb-5">
-          <PageTitle title="Edit cargo" />
+          <PageTitle title="Edit cargo transportation" />
           <Content data={cargo.data || null} />
         </div>
       </Container>

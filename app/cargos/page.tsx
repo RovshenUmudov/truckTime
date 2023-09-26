@@ -6,7 +6,7 @@ import CargoList from '@/components/CargoList';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Cargos',
+  title: 'Cargo transportation - List',
 };
 
 const Cargos: FC = () => (

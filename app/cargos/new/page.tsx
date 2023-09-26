@@ -9,7 +9,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/auth/authOptions';
 
 export const metadata: Metadata = {
-  title: 'Cargo - New',
+  title: 'Cargo transportation - New',
 };
 
 const NewCargo: FC = async () => {
@@ -21,7 +21,7 @@ const NewCargo: FC = async () => {
       <Container>
         <Banner src="/new-cargo-banner.jpg" />
         <div className="max-w-[700px] mb-5">
-          <PageTitle title="Create new cargo" />
+          <PageTitle title="Create new cargo transportation" />
           <Content averageSpeed={session?.user?.averageSpeed || 77} />
         </div>
       </Container>

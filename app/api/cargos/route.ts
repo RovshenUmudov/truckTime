@@ -12,7 +12,9 @@ export async function GET(req: Request) {
       return new Response(JSON.stringify({ message: 'User not found' }), { status: 401 });
     }
 
-    const cargos: ICargo[] = await Cargo.find({ userId: user.get('_id') }).limit(parseInt(limit || '-1', 10));
+    const cargos: ICargo[] = await Cargo.find({ userId: user.get('_id') })
+      .limit(parseInt(limit || '-1', 10))
+      .sort({ created: -1 });
     const total = await Cargo.countDocuments();
 
     return new Response(JSON.stringify({ data: cargos, total }), { status: 200 });

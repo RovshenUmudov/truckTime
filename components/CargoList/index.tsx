@@ -1,11 +1,11 @@
 import { FC } from 'react';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/auth/authOptions';
-import { getCargos } from '@/components/CargoList/requests';
 import CargoItem from '@/components/CargoList/Item';
 import PageTitle from '@/components/ui/Title';
 import LinkButton from '@/components/ui/LinkButton';
 import { clsx } from 'clsx';
+import { getCargos } from '@/app/cargos/requests';
 
 interface ICargoList {
     limit?: number;

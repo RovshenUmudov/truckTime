@@ -55,6 +55,7 @@ const cargoSchema = new Schema({
     },
     required: true,
   },
+  created: { type: Date, default: Date.now },
 });
 
 const Cargo = models.Cargo<ICargoModel> || mongoose.model<ICargoModel>('Cargo', cargoSchema);

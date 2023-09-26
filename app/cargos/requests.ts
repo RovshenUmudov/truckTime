@@ -1,5 +1,5 @@
 import { fetchAPI } from '@/utils/fetch';
-import { ICargo } from '@/types';
+import { ICargo, ICargoResponse } from '@/types';
 
 export async function getCargoById(id: string, token: string) {
   const res = await fetchAPI<ICargo, undefined>(
@@ -49,6 +49,20 @@ export async function createCargo(data: ICargo, token: string) {
       method: 'POST',
       accessToken: token,
       body: data,
+    },
+  );
+
+  return res;
+}
+
+export async function getCargos(token: string, limit?: number) {
+  const res = await fetchAPI<ICargoResponse, { limit?: number; }>(
+    '/cargos',
+    { limit: limit || undefined },
+    {
+      method: 'GET',
+      accessToken: token,
+      next: { revalidate: 0 },
     },
   );
 

@@ -7,7 +7,7 @@ import { useSession } from 'next-auth/react';
 import useNotify from '@/hooks/notify';
 import moment from 'moment';
 import { splitTimeStr } from '@/utils';
-import { deleteCargo, updateCargoById } from '@/app/cargos/[id]/requests';
+import { deleteCargo, updateCargoById } from '@/app/cargos/requests';
 import { useRouter } from 'next/navigation';
 
 interface IEditCargoContent {

@@ -3,12 +3,12 @@
 import { FC, useTransition } from 'react';
 import CargoForm from '@/components/Forms/CargoForm';
 import { ICargo } from '@/types';
-import { fetchAPI } from '@/utils/fetch';
 import { useSession } from 'next-auth/react';
 import useNotify from '@/hooks/notify';
 import moment from 'moment';
 import { splitTimeStr } from '@/utils';
 import { useRouter } from 'next/navigation';
+import { createCargo } from '@/app/cargos/requests';
 
 interface INewCargoContent {
   averageSpeed: number;
@@ -30,11 +30,7 @@ const NewCargoContent: FC<INewCargoContent> = ({ averageSpeed }) => {
       unloadDate: moment(values.unloadDate).set(unloadTime).format(),
     };
 
-    const res = await fetchAPI('/cargos/new', undefined, {
-      method: 'POST',
-      accessToken: session?.tokens?.access.token || '',
-      body: newValues,
-    });
+    const res = await createCargo(newValues, session?.tokens?.access.token || '');
 
     setSubmitting(false);
 

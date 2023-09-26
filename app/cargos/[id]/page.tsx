@@ -6,7 +6,7 @@ import Content from '@/app/cargos/[id]/Content';
 import { IParams } from '@/types';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/auth/authOptions';
-import { getCargoById } from '@/app/cargos/[id]/requests';
+import { getCargoById } from '@/app/cargos/requests';
 import PageTitle from '@/components/ui/Title';
 import { redirect } from 'next/navigation';
 import { Metadata } from 'next';

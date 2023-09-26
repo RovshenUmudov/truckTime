@@ -40,3 +40,17 @@ export async function deleteCargo(token: string, id: string) {
 
   return res;
 }
+
+export async function createCargo(data: ICargo, token: string) {
+  const res = await fetchAPI<ICargo, undefined, ICargo>(
+    '/cargos/new',
+    undefined,
+    {
+      method: 'POST',
+      accessToken: token,
+      body: data,
+    },
+  );
+
+  return res;
+}

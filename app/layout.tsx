@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import { Poppins } from 'next/font/google';
 import Providers from '@/components/Providers';
 import { Toaster } from '@/components/ui/toaster';
-import Footer from '@/components/Footer';
 
 import '../styles/globals.css';
 
@@ -34,7 +33,6 @@ export default function RootLayout({ children }: { children: React.ReactNode;}) 
         <Providers>
           <div className="flex flex-col min-h-[100dvh]">
             {children}
-            <Footer />
           </div>
         </Providers>
       </body>

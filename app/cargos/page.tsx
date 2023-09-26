@@ -1,5 +1,4 @@
 import { FC } from 'react';
-import Header from '@/components/Header';
 import Container from '@/components/Container';
 import Banner from '@/components/Banner';
 import CargoList from '@/components/CargoList';
@@ -10,13 +9,10 @@ export const metadata: Metadata = {
 };
 
 const Cargos: FC = () => (
-  <>
-    <Header />
-    <Container>
-      <Banner src="/banner-all-cargo.jpg" />
-      <CargoList title="All cargo transportation" />
-    </Container>
-  </>
+  <Container>
+    <Banner src="/banner-all-cargo.jpg" />
+    <CargoList title="All cargo transportation" />
+  </Container>
 );
 
 export default Cargos;

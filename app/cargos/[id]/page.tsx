@@ -1,6 +1,5 @@
 import { FC } from 'react';
 import Banner from '@/components/Banner';
-import Header from '@/components/Header';
 import Container from '@/components/Container';
 import Content from '@/app/cargos/[id]/Content';
 import { IParams } from '@/types';
@@ -22,16 +21,13 @@ const SingleCargo: FC<IParams> = async ({ params }) => {
   if (!cargo.data) redirect('/');
 
   return (
-    <>
-      <Header />
-      <Container>
-        <Banner src="/single-cargo.jpg" />
-        <div className="max-w-[700px] mb-5">
-          <PageTitle title="Edit cargo transportation" />
-          <Content data={cargo.data || null} />
-        </div>
-      </Container>
-    </>
+    <Container>
+      <Banner src="/single-cargo.jpg" />
+      <div className="max-w-[700px] mb-5">
+        <PageTitle title="Edit cargo transportation" />
+        <Content data={cargo.data || null} />
+      </div>
+    </Container>
   );
 };
 

@@ -1,5 +1,4 @@
 import { FC } from 'react';
-import Header from '@/components/Header';
 import Container from '@/components/Container';
 import Banner from '@/components/Banner';
 import { Metadata } from 'next';
@@ -19,13 +18,10 @@ const Profile: FC = async () => {
   }
 
   return (
-    <>
-      <Header />
-      <Container>
-        <Banner src="/banner-profile.jpg" />
-        <Content user={session.user} />
-      </Container>
-    </>
+    <Container>
+      <Banner src="/banner-profile.jpg" />
+      <Content user={session.user} />
+    </Container>
   );
 };
 

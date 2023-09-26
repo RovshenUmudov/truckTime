@@ -22,7 +22,7 @@ const Profile: FC = async () => {
     <>
       <Header />
       <Container>
-        <Banner src="/banner-all-cargo.jpg" />
+        <Banner src="/banner-profile.jpg" />
         <Content user={session.user} />
       </Container>
     </>

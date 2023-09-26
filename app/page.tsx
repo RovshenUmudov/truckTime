@@ -10,7 +10,7 @@ const Home: FC = () => (
   <>
     <Header />
     <Container>
-      <Banner src="/banner-5.jpg" />
+      <Banner src="/banner-home.jpg" />
       <div className="border rounded-md p-5 mb-10 grid grid-cols-2 max-[768px]:grid-cols-1
        items-center gap-5 justify-between max-[768px]:text-center max-[768px]:mb-5"
       >

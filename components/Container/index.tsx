@@ -2,13 +2,18 @@ import { FC, PropsWithChildren } from 'react';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 
-const Container: FC<PropsWithChildren> = ({ children }) => (
+interface IContainer extends PropsWithChildren{
+    disableHeader?: boolean;
+    disableFooter?: boolean;
+}
+
+const Container: FC<IContainer> = ({ children, disableHeader = false, disableFooter = false }) => (
   <>
-    <Header />
+    {!disableHeader ? <Header /> : null}
     <div className="container mx-auto p-5 max-[768px]:p-3 grow">
       {children}
     </div>
-    <Footer />
+    {!disableFooter ? <Footer /> : null}
   </>
 );
 

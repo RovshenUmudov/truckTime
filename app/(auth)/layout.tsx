@@ -20,7 +20,7 @@ const AuthLayout = ({ children }: { children: ReactNode; }) => (
       <div className="relative z-30 mt-auto">
         <blockquote className="space-y-2">
           <p className="text-lg">
-            "This web application was created special for track drives to save their time."
+            "This web application was created special for truck drives to save their time."
           </p>
           <footer className="text-sm">Rovshen Umudov</footer>
         </blockquote>

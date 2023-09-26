@@ -13,7 +13,7 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: 'Track Time',
+  title: 'Truck Time',
   viewport: {
     width: 'device-width',
     initialScale: 1,

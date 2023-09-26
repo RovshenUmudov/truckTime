@@ -16,6 +16,7 @@ interface ICargoModel extends Document {
   remainingTime: ITime;
   driving: IDriving;
   duration: ITime;
+  created: Date;
 }
 
 const cargoSchema = new Schema({
@@ -55,7 +56,7 @@ const cargoSchema = new Schema({
     },
     required: true,
   },
-  created: { type: Date, default: Date.now },
+  created: { type: Date, default: Date.now, immutable: true },
 });
 
 const Cargo = models.Cargo<ICargoModel> || mongoose.model<ICargoModel>('Cargo', cargoSchema);

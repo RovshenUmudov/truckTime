@@ -1,8 +1,8 @@
 import { fetchAPI } from '@/utils/fetch';
-import { ICargo } from '@/types';
+import { ICargoResponse } from '@/types';
 
 export async function getCargos(token: string, limit?: number) {
-  const res = await fetchAPI<ICargo[], { limit?: number; }>(
+  const res = await fetchAPI<ICargoResponse, { limit?: number; }>(
     '/cargos',
     { limit: limit || undefined },
     {

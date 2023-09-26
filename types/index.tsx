@@ -73,3 +73,8 @@ export interface ICalculateCargo {
 export interface IParams {
     params: { id: string; };
 }
+
+export interface ICargoResponse {
+    data: ICargo[];
+    total: number;
+}

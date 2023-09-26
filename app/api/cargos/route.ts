@@ -13,8 +13,9 @@ export async function GET(req: Request) {
     }
 
     const cargos: ICargo[] = await Cargo.find({ userId: user.get('_id') }).limit(parseInt(limit || '-1', 10));
+    const total = await Cargo.countDocuments();
 
-    return new Response(JSON.stringify(cargos), { status: 200 });
+    return new Response(JSON.stringify({ data: cargos, total }), { status: 200 });
   } catch (e) {
     return new Response(JSON.stringify({ message: `Server error: ${e}` }), { status: 500 });
   }

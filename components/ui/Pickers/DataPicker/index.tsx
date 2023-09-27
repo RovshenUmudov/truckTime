@@ -29,7 +29,7 @@ const DatePicker: FC<IDatePicker> = ({
   placeholder = 'Pick a date',
   disabled = false,
   error,
-  fromDate = new Date(),
+  fromDate,
   onBlur,
 }) => (
   <div>

@@ -126,19 +126,6 @@ const CargoForm: FC<ICargoProps> = ({
               onChange={(date: Date | undefined) => formik.setFieldValue('startDate', moment(date).format())}
               error={formik.touched.startDate && formik.errors.startDate?.length ? formik.errors.startDate : null}
             />
-            <DatePicker
-              name="unloadDate"
-              label="Unload Date *"
-              placeholder="Pick unload date"
-              disabled={formik.isSubmitting}
-              value={formik.values.unloadDate ? moment(formik.values.unloadDate).toDate() : undefined}
-              onBlur={formik.handleBlur}
-              fromDate={moment(formik.values.startDate).toDate()}
-              onChange={(date: Date | undefined) => formik.setFieldValue('unloadDate', moment(date).format())}
-              error={formik.touched.unloadDate && formik.errors.unloadDate?.length ? formik.errors.unloadDate : null}
-            />
-          </div>
-          <div className="grid gap-5 grid-cols-2 max-[768px]:grid-cols-1">
             <Input
               type="time"
               name="startTime"
@@ -150,6 +137,19 @@ const CargoForm: FC<ICargoProps> = ({
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               error={formik.touched.startTime && formik.errors.startTime?.length ? formik.errors.startTime : null}
+            />
+          </div>
+          <div className="grid gap-5 grid-cols-2 max-[768px]:grid-cols-1">
+            <DatePicker
+              name="unloadDate"
+              label="Unload Date *"
+              placeholder="Pick unload date"
+              disabled={formik.isSubmitting}
+              value={formik.values.unloadDate ? moment(formik.values.unloadDate).toDate() : undefined}
+              onBlur={formik.handleBlur}
+              fromDate={moment(formik.values.startDate).toDate()}
+              onChange={(date: Date | undefined) => formik.setFieldValue('unloadDate', moment(date).format())}
+              error={formik.touched.unloadDate && formik.errors.unloadDate?.length ? formik.errors.unloadDate : null}
             />
             <Input
               type="time"

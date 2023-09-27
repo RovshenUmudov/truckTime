@@ -6,16 +6,26 @@ import PageTitle from '@/components/ui/Title';
 import LinkButton from '@/components/ui/LinkButton';
 import { clsx } from 'clsx';
 import { getCargos } from '@/app/cargos/requests';
+import { IMetadataParams } from '@/types';
 
 interface ICargoList {
     limit?: number;
     title: string;
     className?:string;
+    searchParams?: IMetadataParams['searchParams'];
 }
 
-const CargoList: FC<ICargoList> = async ({ title, limit, className = '' }) => {
+const CargoList: FC<ICargoList> = async ({
+  title,
+  searchParams,
+  limit,
+  className = '',
+}) => {
   const session = await getServerSession(authOptions);
-  const cargos = await getCargos(session?.tokens?.access.token || '', limit);
+  const cargos = await getCargos(
+    session?.tokens?.access.token || '',
+    { ...searchParams, limit: limit ? limit.toString() : '' },
+  );
 
   if (!cargos.data?.data) {
     return null;

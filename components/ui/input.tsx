@@ -28,11 +28,7 @@ const Input = React.forwardRef<HTMLInputElement, IInputProps>(
     ref,
   ) => (
     <div>
-      {label ? (
-        <Label htmlFor={name}>
-          {label}
-        </Label>
-      ) : null}
+      {label ? <Label htmlFor={name}>{label}</Label> : null}
       <div className="relative">
         <input
           type={type}

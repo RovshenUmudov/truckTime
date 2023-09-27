@@ -10,7 +10,7 @@ interface IContainer extends PropsWithChildren{
 const Container: FC<IContainer> = ({ children, disableHeader = false, disableFooter = false }) => (
   <>
     {!disableHeader ? <Header /> : null}
-    <div className="container mx-auto p-5 max-[768px]:p-3 grow">
+    <div className="container mx-auto p-5 max-[768px]:p-4 grow">
       {children}
     </div>
     {!disableFooter ? <Footer /> : null}

@@ -6,16 +6,21 @@ export async function GET(req: Request) {
   try {
     const user = await authenticateUser(req);
     const { searchParams } = new URL(req.url);
-    const limit = searchParams.get('limit');
 
     if (!user) {
       return new Response(JSON.stringify({ message: 'User not found' }), { status: 401 });
     }
 
-    const cargos: ICargo[] = await Cargo.find({ userId: user.get('_id') })
-      .limit(parseInt(limit || '-1', 10))
-      .sort({ created: -1 });
     const total = await Cargo.countDocuments();
+
+    const sort = searchParams.get('sort') === 'DESC' ? 1 : -1;
+
+    const cargos: ICargo[] = await Cargo.find({
+      userId: user.get('_id'),
+      title: { $regex: new RegExp(searchParams.get('search') || '', 'i') },
+    })
+      .limit(+(searchParams.get('limit') || total))
+      .sort({ created: sort });
 
     return new Response(JSON.stringify({ data: cargos, total }), { status: 200 });
   } catch (e) {

@@ -78,3 +78,8 @@ export interface ICargoResponse {
     data: ICargo[];
     total: number;
 }
+
+export interface IMetadataParams {
+    params: { id: string; };
+    searchParams: { [key: string]: string | string[] | undefined; };
+}

@@ -55,10 +55,10 @@ export async function createCargo(data: ICargo, token: string) {
   return res;
 }
 
-export async function getCargos(token: string, limit?: number) {
-  const res = await fetchAPI<ICargoResponse, { limit?: number; }>(
+export async function getCargos(token: string, params: Record<string, string>) {
+  const res = await fetchAPI<ICargoResponse, Record<string, string>>(
     '/cargos',
-    { limit: limit || undefined },
+    params,
     {
       method: 'GET',
       accessToken: token,

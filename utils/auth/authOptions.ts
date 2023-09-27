@@ -10,6 +10,7 @@ import { userMe } from '@/utils/auth/userMe';
 export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   session: {
+    maxAge: 720 * 3600,
     strategy: 'jwt',
   },
   providers: [

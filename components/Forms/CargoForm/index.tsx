@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/button';
 import MultipleUnload from '@/components/Forms/CargoForm/MultipleUnload';
 import SingleUnload from '@/components/Forms/CargoForm/SingleUnload';
 import CargoFormPrompt from '@/components/Forms/CargoForm/FormPrompt';
+import TimeField from 'react-simple-timefield';
 
 interface ICargoProps {
   initialValues?: ICargo;
@@ -42,10 +43,10 @@ export const defaultCargoFormValues: ICargo = {
   unloadTime: '',
   averageSpeed: 77,
   totalDistance: 0,
-  type: EnumCargoType.multiple,
+  type: EnumCargoType.single,
   eightHoursBreak: 0,
   oneHoursBreak: 0,
-  remainingWorkHours: '',
+  remainingWorkHours: '08:00',
   remainingTime: null,
   driving: null,
   duration: null,
@@ -75,7 +76,7 @@ const CargoForm: FC<ICargoProps> = ({
     formik.setFieldValue('oneHoursBreak', result.oneHoursBreak);
 
     if (formik.values.type === EnumCargoType.multiple) {
-      formik.setFieldValue('totalDistance', result.totalDistance || 0);
+      formik.setFieldValue('totalDistance', result.totalDistance || '');
     }
 
     if (!isObjEqual(formik.values, initialValues || defaultCargoFormValues)) {
@@ -89,7 +90,7 @@ const CargoForm: FC<ICargoProps> = ({
 
   useEffect(() => {
     formik.setFieldTouched('totalDistance', false);
-    formik.setFieldValue('totalDistance', 0);
+    formik.setFieldValue('totalDistance', '');
   }, [formik.values.type]);
 
   return (
@@ -120,20 +121,23 @@ const CargoForm: FC<ICargoProps> = ({
               formik.setFieldValue('type', e);
             }}
           />
-          <Input
-            name="remainingWorkHours"
-            label="Remaining Hours *"
-            placeholder="Type time"
-            icon={<Clock4 className="w-4 h-4" />}
+          <TimeField
+            colon=":"
             value={formik.values.remainingWorkHours}
-            type="time"
-            disabled={formik.isSubmitting}
-            helper="Type the remaining work hours for today"
             onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            error={formik.touched.remainingWorkHours && formik.errors.remainingWorkHours?.length ? (
-              formik.errors.remainingWorkHours
-            ) : null}
+            input={(
+              <Input
+                prefix="h:m"
+                label="Remaining Hours *"
+                name="remainingWorkHours"
+                disabled={formik.isSubmitting}
+                helper="Type the remaining work hours for today"
+                onBlur={formik.handleBlur}
+                error={formik.touched.remainingWorkHours && formik.errors.remainingWorkHours?.length ? (
+                  formik.errors.remainingWorkHours
+                ) : null}
+              />
+            )}
           />
         </div>
         <div className="grid gap-5 grid-cols-2 max-[768px]:grid-cols-1">
@@ -167,14 +171,14 @@ const CargoForm: FC<ICargoProps> = ({
           <Input
             prefix="km"
             name="totalDistance"
-            label="Todal Distance"
+            label="Todal Distance *"
             placeholder="Type distance in km"
             disabled={formik.isSubmitting || formik.values.type === EnumCargoType.multiple}
             value={formik.values.totalDistance || ''}
             maxLength={5}
             min={1}
             onChange={(e) => {
-              if (e.target.value === '' || (numberRegExp.test(e.target.value) && +e.target.value > 0)) {
+              if (e.target.value === '' || numberRegExp.test(e.target.value)) {
                 formik.handleChange(e);
               }
             }}

@@ -110,7 +110,7 @@ export const validationCargo = yup.object().shape({
   type: yup.string().required(),
   remainingWorkHours: yup.string().test(
     'is-before-max',
-    'Maximum of 8 hours',
+    'Maximum is 8 hours',
     (value) => new Date(`1970-01-01T${value}`) <= new Date('1970-01-01T08:00'),
   ).required('Time is required'),
   unloadDate: yup.string().when('type', ([type], schema) => {

@@ -136,7 +136,6 @@ export const calculateCargo = (values: ICargo) => {
     driving: null,
     duration: null,
     oneHoursBreak: 0,
-    totalDistance: 0,
     eightHoursBreak: 0,
   };
 

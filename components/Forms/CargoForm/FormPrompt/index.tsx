@@ -27,6 +27,7 @@ const CargoFormPrompt: FC<ICargoFormPrompt> = ({ data }) => {
 
   if (!data?.remainingTime
     || !data.driving
+    || !data.totalDistance
     || data.remainingTime.totalInSeconds === undefined) {
     return null;
   }

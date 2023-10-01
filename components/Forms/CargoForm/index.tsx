@@ -42,7 +42,7 @@ export const defaultCargoFormValues: ICargo = {
   unloadTime: '',
   averageSpeed: 77,
   totalDistance: 0,
-  type: EnumCargoType.single,
+  type: EnumCargoType.multiple,
   eightHoursBreak: 0,
   oneHoursBreak: 0,
   remainingWorkHours: '',
@@ -94,7 +94,7 @@ const CargoForm: FC<ICargoProps> = ({
 
   return (
     <form onSubmit={formik.handleSubmit}>
-      <CargoFormPrompt data={initialValues || state} />
+      <CargoFormPrompt data={state || initialValues || null} />
       <div className="grid gap-5">
         <Input
           name="title"
@@ -160,10 +160,9 @@ const CargoForm: FC<ICargoProps> = ({
             error={formik.touched.startTime && formik.errors.startTime?.length ? formik.errors.startTime : null}
           />
         </div>
-        {
-            formik.values.type === EnumCargoType.multiple ? (
-              <MultipleUnload formik={formik} />) : <SingleUnload formik={formik} />
-          }
+        {formik.values.type === EnumCargoType.multiple ? (
+          <MultipleUnload formik={formik} />
+        ) : <SingleUnload formik={formik} />}
         <div className="grid gap-5 grid-cols-[1fr_170px] max-[768px]:grid-cols-1">
           <Input
             prefix="km"

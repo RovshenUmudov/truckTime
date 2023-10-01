@@ -12,7 +12,6 @@ const UnloadNumberField: FC<IMultipleUnloadField> = ({
   value,
   name = '',
   prefix,
-  numberField = false,
   ...rest
 }) => (
   <Input
@@ -22,11 +21,7 @@ const UnloadNumberField: FC<IMultipleUnloadField> = ({
     value={value || ''}
     onBlur={formik.handleBlur}
     onChange={(e) => {
-      if (numberField) {
-        if (e.target.value === '' || (numberRegExp.test(e.target.value) && +e.target.value > 0)) {
-          formik.handleChange(e);
-        }
-      } else {
+      if (e.target.value === '' || numberRegExp.test(e.target.value)) {
         formik.handleChange(e);
       }
     }}

@@ -130,9 +130,7 @@ export const validationCargo = yup.object().shape({
           date: yup.string().required('This field is required'),
           time: yup.string().required('This field is required'),
           distance: yup.number().required('This field is required'),
-          breakTime: yup.string()
-            .matches(/^(0?[0-9]|1[0-9]|2[0-3])(:[0-5][0-9])?$/, 'Invalid time format')
-            .required('This field is required'),
+          breakTime: yup.string(),
         }),
       );
     }

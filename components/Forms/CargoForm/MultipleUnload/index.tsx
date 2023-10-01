@@ -4,14 +4,14 @@ import { FC } from 'react';
 import { Button } from '@/components/ui/button';
 import { MinusCircle, Plus } from 'lucide-react';
 import { IUnload } from '@/types';
-import { IInputProps } from '@/components/ui/input';
+import { IInputProps, Input } from '@/components/ui/input';
 import UnloadTimeField from '@/components/Forms/CargoForm/MultipleUnload/TimeField';
 import UnloadNumberField from '@/components/Forms/CargoForm/MultipleUnload/NumberField';
+import TimeField from 'react-simple-timefield';
 import UnloadDateField from './DateField';
 
 export interface IMultipleUnloadField extends IUnload, IInputProps {
   index: number;
-  numberField?: boolean;
 }
 
 const MultipleUnload: FC<IUnload> = ({ formik }) => (
@@ -31,25 +31,26 @@ const MultipleUnload: FC<IUnload> = ({ formik }) => (
             prefix="km"
             label="Distance *"
             name="distance"
-            numberField
             placeholder="Type distance in km"
             maxLength={5}
             min={1}
           />
-          <UnloadNumberField
-            index={index}
+          <TimeField
             value={unloading.breakTime}
-            formik={formik}
-            prefix="h:m"
-            label="Break *"
-            name="breakTime"
-            placeholder="Type break time in hours"
-            maxLength={5}
+            onChange={formik.handleChange}
+            colon=":"
+            input={(
+              <Input
+                prefix="h:m"
+                label="Break *"
+                name={`multipleUnload.${index}.breakTime`}
+              />
+            )}
           />
         </div>
         <Button
           disabled={formik.values.multipleUnload.length <= 1}
-          className="mt-4 p-3 max-[768px]:mt-2"
+          className="mt-4 p-3 max-[768px]:mt-2 max-[768px]:w-[105px] max-[768px]:mx-auto"
           onClick={() => {
             formik.setFieldValue(
               'multipleUnload',

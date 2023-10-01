@@ -42,7 +42,7 @@ const MultipleUnload: FC<IUnload> = ({ formik }) => (
             input={(
               <Input
                 prefix="h:m"
-                label="Break *"
+                label="Break"
                 name={`multipleUnload.${index}.breakTime`}
               />
             )}

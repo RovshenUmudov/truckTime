@@ -1,8 +1,9 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import { ICalculateCargo, ICargo, ITime } from '@/types';
+import { EnumCargoType, ICalculateCargo, ICargo, IMultipleUnload, ITime } from '@/types';
 import moment from 'moment';
+import { defaultCargoFormValues } from '@/components/Forms/CargoForm';
 
 export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
 const eightHoursInSeconds = 8 * 3600;
@@ -100,32 +101,25 @@ export const calculateBreaks = (seconds: number) => {
 };
 
 export const combineDateTime = (date: string, time: string) => {
-  const timeParts = time.split(':').map(Number);
+  const { hours, minutes } = splitTimeStr(time);
 
-  let dateTime = moment(date).format('YYYY-MM-DD HH:mm:ss');
-
-  if (timeParts.length === 2) {
-    dateTime = moment(date)
-      .hours(timeParts[0])
-      .minutes(timeParts[1])
-      .seconds(0)
-      .format('YYYY-MM-DD HH:mm:ss');
-  }
+  const dateTime = moment(date)
+    .hours(hours)
+    .minutes(minutes)
+    .seconds(0)
+    .format('YYYY-MM-DD HH:mm:ss');
 
   return moment(dateTime);
 };
 
 export const remainingTimeToSeconds = (value: string, differenceInSeconds: number) => {
-  const parts = value.split(':');
-
-  const hours = +parts[0];
-  const minutes = +parts[1];
+  const { totalInSeconds } = splitTimeStr(value);
 
   if (differenceInSeconds / 3600 <= 24) {
-    return (hours * 3600) + (minutes * 60);
+    return totalInSeconds || 0;
   }
 
-  return eightHoursInSeconds - (hours * 3600) + (minutes * 60);
+  return eightHoursInSeconds - (totalInSeconds || 0);
 };
 
 export const calculateCargo = (values: ICargo) => {
@@ -133,11 +127,11 @@ export const calculateCargo = (values: ICargo) => {
     remainingWorkHours,
     startDate,
     startTime,
-    unloadDate,
-    unloadTime,
-    distance,
+    totalDistance,
     eightHoursBreak,
     averageSpeed,
+    multipleUnload,
+    type,
   } = values;
 
   let result: ICalculateCargo = {
@@ -146,24 +140,48 @@ export const calculateCargo = (values: ICargo) => {
     duration: null,
     oneHoursBreak: 0,
     elevenHoursBreak: 0,
+    totalDistance: 0,
   };
 
-  if (averageSpeed && startDate && startTime && unloadDate && unloadTime && remainingWorkHours) {
-    const loadDateTime = combineDateTime(startDate, startTime);
-    const unloadDataTime = combineDateTime(unloadDate, unloadTime);
-    const differenceInSeconds = unloadDataTime.diff(loadDateTime, 'seconds');
+  let breaks = 0;
+  let distance = type === EnumCargoType.single ? totalDistance || 0 : 0;
+  let lastMultipleUnload: IMultipleUnload = defaultCargoFormValues.multipleUnload[0];
 
+  if (type === EnumCargoType.multiple) {
+    [lastMultipleUnload] = multipleUnload.slice(-1);
+
+    multipleUnload.forEach((el, index) => {
+      const { totalInSeconds } = splitTimeStr(el.breakTime);
+
+      breaks += multipleUnload.length > 1 && index < multipleUnload.length - 1 ? (totalInSeconds || 0) : 0;
+      distance += +el.distance || 0;
+    });
+  }
+
+  if (averageSpeed && startDate && startTime && remainingWorkHours) {
+    const loadDateTime = combineDateTime(startDate, startTime);
+    const unloadDataTime = handleUnloadDate(values, lastMultipleUnload);
+
+    if (!unloadDataTime) {
+      return result;
+    }
+
+    const differenceInSeconds = unloadDataTime.diff(loadDateTime, 'seconds');
     const remainingTimeTodayInSeconds = remainingTimeToSeconds(remainingWorkHours, differenceInSeconds);
-    const driving = calculateDrivingTime(distance || 0, averageSpeed);
+    const driving = calculateDrivingTime(distance, averageSpeed);
     const { oneHoursBreak, elevenHoursBreak } = calculateBreaks(driving.durationInSeconds);
 
     const totalDuration = moment.duration(differenceInSeconds, 'seconds');
 
-    const adjustedDifference = differenceInSeconds / 3600 <= 24
-      ? remainingTimeTodayInSeconds : differenceInSeconds - remainingTimeTodayInSeconds;
+    let adjustedDifference = differenceInSeconds;
+
+    if (differenceInSeconds / 3600 > 24) {
+      adjustedDifference = differenceInSeconds - remainingTimeTodayInSeconds;
+    }
 
     const duration = moment.duration(
       adjustedDifference
+        - breaks
         - driving.durationInSeconds
         - (oneHoursBreak * 3600)
         - ((elevenHoursBreak * 39600) - (eightHoursBreak * 7200)),
@@ -181,11 +199,24 @@ export const calculateCargo = (values: ICargo) => {
         minutes: duration.minutes(),
       }),
       driving,
+      totalDistance: distance,
       oneHoursBreak,
     };
   }
 
   return result;
+};
+
+const handleUnloadDate = (values: ICargo, lastElement: IMultipleUnload) => {
+  if (values.type === EnumCargoType.multiple && lastElement?.date?.length && lastElement?.time?.length) {
+    return combineDateTime(lastElement.date, lastElement.time);
+  }
+
+  if (values.type === EnumCargoType.single && values.unloadDate && values.unloadTime) {
+    return combineDateTime(values.unloadDate, values.unloadTime);
+  }
+
+  return null;
 };
 
 export const formatTime = ({ hours, minutes }: ITime) => ({
@@ -198,20 +229,24 @@ export const beatifyTime = ({ hours, minutes }: ITime, withSign = true) => {
   const minutesPrefix = Math.abs(minutes) > 1 ? 'minutes' : 'minutes';
   const sign = hours < 0 || minutes < 0 ? '-' : '+';
 
+  if (hours === 0 && minutes === 0) {
+    return 'On time';
+  }
+
   return `${withSign ? sign : ''} ${Math.abs(hours) ? `${`${Math.abs(hours)} ${hoursPrefix}`}` : ''}
   ${Math.abs(minutes) > 0 ? `${`${Math.abs(minutes)} ${minutesPrefix}`}` : ''}`;
 };
 
 export const splitTimeStr = (time: string): ITime => {
-  const parts = time.split(':').map(Number);
+  const parts = (time || '00:00').split(':').map(Number);
 
-  if (parts.length === 2) {
-    return {
-      hours: parts[0] || 0,
-      minutes: parts[1] || 0,
-      second: 0,
-    };
-  }
+  const hours = parts[0];
+  const minutes = parts[1] || 0;
 
-  return { hours: 0, minutes: 0, second: 0 };
+  return {
+    hours,
+    minutes,
+    second: 0,
+    totalInSeconds: (hours * 3600) + (minutes * 60),
+  };
 };

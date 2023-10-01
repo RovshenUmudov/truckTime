@@ -1,4 +1,5 @@
 import * as yup from 'yup';
+import { EnumCargoType } from '@/types';
 
 const phoneRegExp = /^(\+?\d{0,4})?\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{4}\)?)?$/;
 
@@ -100,19 +101,44 @@ export const validationCargo = yup.object().shape({
     .required('This field is required')
     .max(100, 'Cannot be more than 100 characters.'),
   startDate: yup.date().required('This field is required'),
-  unloadDate: yup.date().required('This field is required'),
   averageSpeed: yup.number()
     .default(77)
     .required('This field is required')
     .max(100, 'Max average speed is 100 km'),
   startTime: yup.string().required('This field is required'),
-  unloadTime: yup.string().required('This field is required'),
-  distance: yup.number().required('This field is required'),
+  totalDistance: yup.number().required('This field is required'),
+  type: yup.string().required(),
   remainingWorkHours: yup.string().test(
     'is-before-max',
     'Maximum of 8 hours',
     (value) => new Date(`1970-01-01T${value}`) <= new Date('1970-01-01T08:00'),
   ).required('Time is required'),
+  unloadDate: yup.string().when('type', ([type], schema) => {
+    if (type === EnumCargoType.single) return yup.string().required('Field is required');
+
+    return schema;
+  }),
+  unloadTime: yup.string().when('type', ([type], schema) => {
+    if (type === EnumCargoType.single) return yup.string().required('Field is required');
+
+    return schema;
+  }),
+  multipleUnload: yup.array().when('type', ([type], schema) => {
+    if (type === EnumCargoType.multiple) {
+      return yup.array().of(
+        yup.object().shape({
+          date: yup.string().required('This field is required'),
+          time: yup.string().required('This field is required'),
+          distance: yup.number().required('This field is required'),
+          breakTime: yup.string()
+            .matches(/^(0?[0-9]|1[0-9]|2[0-3])(:[0-5][0-9])?$/, 'Invalid time format')
+            .required('This field is required'),
+        }),
+      );
+    }
+
+    return schema;
+  }),
 });
 
 export const validationProfile = yup.object().shape({

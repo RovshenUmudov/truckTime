@@ -14,19 +14,7 @@ export async function POST(req: Request) {
 
     const newCargo = await Cargo.create({
       userId: user.get('_id'),
-      title: body.title,
-      startDate: body.startDate,
-      startTime: body.startTime,
-      unloadDate: body.unloadDate,
-      unloadTime: body.unloadTime,
-      averageSpeed: body.averageSpeed,
-      distance: body.distance,
-      eightHoursBreak: body.eightHoursBreak,
-      oneHoursBreak: body.oneHoursBreak,
-      remainingWorkHours: body.remainingWorkHours,
-      driving: body.driving,
-      remainingTime: body.remainingTime,
-      duration: body.duration,
+      ...body,
     });
 
     return new Response(JSON.stringify(newCargo), { status: 200 });

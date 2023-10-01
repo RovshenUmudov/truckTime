@@ -1,4 +1,4 @@
-import { ICargo } from '@/types';
+import { EnumUserRole, ICargo } from '@/types';
 import Cargo from '@/mongoDB/models/cargo';
 import { authenticateUser } from '@/app/api/users/me/route';
 
@@ -16,7 +16,7 @@ export async function GET(req: Request) {
     const sort = searchParams.get('sort') === 'DESC' ? 1 : -1;
 
     const cargos: ICargo[] = await Cargo.find({
-      userId: user.get('_id'),
+      ...(user.get('role') !== EnumUserRole.admin && { userId: user.get('_id') }),
       title: { $regex: new RegExp(searchParams.get('search') || '', 'i') },
     })
       .limit(+(searchParams.get('limit') || total))

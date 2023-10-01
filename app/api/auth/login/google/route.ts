@@ -34,10 +34,11 @@ export async function POST(req: Request) {
     }
 
     await connectMongoDB();
+
     let user = await User.findOne({ email: decodedToken.email });
 
     if (!user) {
-      user = await User.create({ email: decodedToken.email });
+      user = await User.create({ email: decodedToken.email, averageSpeed: 77, role: 'user' });
     }
 
     const tokens = createJWT(user.id);

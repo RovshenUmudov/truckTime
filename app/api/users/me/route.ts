@@ -30,6 +30,7 @@ export async function GET(req: Request) {
       id: user.get('_id'),
       email: user.get('email'),
       averageSpeed: user.get('averageSpeed'),
+      role: user.get('role'),
     }), { status: 200 });
   } catch (e) {
     return new Response(JSON.stringify({ message: `Server error: ${e}` }), { status: 500 });

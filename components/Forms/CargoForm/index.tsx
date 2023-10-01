@@ -2,16 +2,19 @@
 
 import { FC, useEffect, useState } from 'react';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import { AlertCircle, Bed, Clock4, Coffee, Loader2 } from 'lucide-react';
 import { useFormik } from 'formik';
 import { validationCargo } from '@/utils/validations';
 import DatePicker from '@/components/ui/Pickers/DataPicker';
 import { beatifyTime, calculateCargo, eightHoursBreakCountRegExp, isObjEqual, numberRegExp } from '@/utils';
-import { ICalculateCargo, ICargo } from '@/types';
+import { EnumCargoType, ICalculateCargo, ICargo, IOption } from '@/types';
 import { useContextUnsavedChanges } from '@/context/unsavedChanges';
 import Prompt from '@/components/Prompt';
 import moment from 'moment';
+import InputSelect from '@/components/ui/InputSelect';
+import { Button } from '@/components/ui/button';
+import MultipleUnload from '@/components/Forms/CargoForm/MultipleUnload';
+import SingleUnload from '@/components/Forms/CargoForm/SingleUnload';
 
 interface ICargoProps {
   initialValues?: ICargo;
@@ -20,14 +23,26 @@ interface ICargoProps {
   averageSpeed?: number;
 }
 
-const defaultValues: ICargo = {
+const optionsList: IOption[] = [
+  { label: 'Single unload', value: EnumCargoType.single },
+  { label: 'Multiple unload', value: EnumCargoType.multiple },
+];
+
+export const defaultCargoFormValues: ICargo = {
   title: '',
   startDate: moment().set({ hour: 0, minutes: 0, second: 0, millisecond: 0 }).format('YYYY-MM-DDTHH:mm:ssZ'),
   startTime: '',
+  multipleUnload: [{
+    date: '',
+    time: '',
+    distance: '',
+    breakTime: '',
+  }],
   unloadDate: undefined,
   unloadTime: '',
   averageSpeed: 77,
-  distance: null,
+  totalDistance: 0,
+  type: EnumCargoType.single,
   eightHoursBreak: 0,
   oneHoursBreak: 0,
   remainingWorkHours: '',
@@ -46,7 +61,7 @@ const CargoForm: FC<ICargoProps> = ({
   const [state, setState] = useState<ICalculateCargo | null>(null);
 
   const formik = useFormik<ICargo>({
-    initialValues: initialValues || defaultValues,
+    initialValues: initialValues || defaultCargoFormValues,
     validationSchema: validationCargo,
     onSubmit: (values, { setSubmitting }) => {
       handleSubmit({ ...values, ...state }, setSubmitting);
@@ -59,7 +74,11 @@ const CargoForm: FC<ICargoProps> = ({
     setState(result || null);
     formik.setFieldValue('oneHoursBreak', result.oneHoursBreak);
 
-    if (!isObjEqual(formik.values, initialValues || defaultValues)) {
+    if (formik.values.type === EnumCargoType.multiple) {
+      formik.setFieldValue('totalDistance', result.totalDistance || 0);
+    }
+
+    if (!isObjEqual(formik.values, initialValues || defaultCargoFormValues)) {
       handleUnsavedChanges(true);
 
       return;
@@ -67,6 +86,11 @@ const CargoForm: FC<ICargoProps> = ({
 
     handleUnsavedChanges(false);
   }, [formik.values]);
+
+  useEffect(() => {
+    formik.setFieldTouched('totalDistance', false);
+    formik.setFieldValue('totalDistance', 0);
+  }, [formik.values.type]);
 
   return (
     <>
@@ -83,21 +107,38 @@ const CargoForm: FC<ICargoProps> = ({
             icon={<AlertCircle className="h-4 w-4" />}
           />
         ) : null}
+      {state?.remainingTime && state.remainingTime.hours === 0 && state.remainingTime.minutes === 0 ? (
+        <Prompt
+          variant="default"
+          description={beatifyTime(state.remainingTime)}
+          icon={<AlertCircle className="h-4 w-4" />}
+        />
+      ) : null}
       <form onSubmit={formik.handleSubmit}>
         <div className="grid gap-5">
+          <Input
+            name="title"
+            placeholder="Title"
+            autoCapitalize="none"
+            autoComplete="title"
+            autoCorrect="off"
+            label="Title *"
+            disabled={formik.isSubmitting}
+            value={formik.values.title}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            error={formik.touched.title && formik.errors.title?.length ? formik.errors.title : null}
+          />
           <div className="grid gap-5 grid-cols-2 max-[768px]:grid-cols-1">
-            <Input
-              name="title"
-              placeholder="Title"
-              autoCapitalize="none"
-              autoComplete="title"
-              autoCorrect="off"
-              label="Title *"
+            <InputSelect
+              label="Type *"
+              name="type"
+              options={optionsList}
+              defaultValue={formik.values.type}
               disabled={formik.isSubmitting}
-              value={formik.values.title}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched.title && formik.errors.title?.length ? formik.errors.title : null}
+              handleChange={(e) => {
+                formik.setFieldValue('type', e);
+              }}
             />
             <Input
               name="remainingWorkHours"
@@ -139,39 +180,18 @@ const CargoForm: FC<ICargoProps> = ({
               error={formik.touched.startTime && formik.errors.startTime?.length ? formik.errors.startTime : null}
             />
           </div>
-          <div className="grid gap-5 grid-cols-2 max-[768px]:grid-cols-1">
-            <DatePicker
-              name="unloadDate"
-              label="Unload Date *"
-              placeholder="Pick unload date"
-              disabled={formik.isSubmitting}
-              value={formik.values.unloadDate ? moment(formik.values.unloadDate).toDate() : undefined}
-              onBlur={formik.handleBlur}
-              fromDate={moment(formik.values.startDate).toDate()}
-              onChange={(date: Date | undefined) => formik.setFieldValue('unloadDate', moment(date).format())}
-              error={formik.touched.unloadDate && formik.errors.unloadDate?.length ? formik.errors.unloadDate : null}
-            />
-            <Input
-              type="time"
-              name="unloadTime"
-              label="Unload Time *"
-              placeholder="Set time"
-              icon={<Clock4 className="w-4 h-4" />}
-              disabled={formik.isSubmitting}
-              value={formik.values.unloadTime}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched.unloadTime && formik.errors.unloadTime?.length ? formik.errors.unloadTime : null}
-            />
-          </div>
+          {
+            formik.values.type === EnumCargoType.multiple ? (
+              <MultipleUnload formik={formik} />) : <SingleUnload formik={formik} />
+          }
           <div className="grid gap-5 grid-cols-[1fr_170px] max-[768px]:grid-cols-1">
             <Input
               prefix="km"
-              name="distance"
-              label="Distance"
+              name="totalDistance"
+              label="Todal Distance"
               placeholder="Type distance in km"
-              disabled={formik.isSubmitting}
-              value={formik.values.distance || ''}
+              disabled={formik.isSubmitting || formik.values.type === EnumCargoType.multiple}
+              value={formik.values.totalDistance || ''}
               maxLength={5}
               min={1}
               onChange={(e) => {
@@ -180,7 +200,8 @@ const CargoForm: FC<ICargoProps> = ({
                 }
               }}
               onBlur={formik.handleBlur}
-              error={formik.touched.distance && formik.errors.distance?.length ? formik.errors.distance : null}
+              error={formik.touched.totalDistance && formik.errors.totalDistance?.length ? (
+                formik.errors.totalDistance) : null}
             />
             <Input
               prefix="km/h"

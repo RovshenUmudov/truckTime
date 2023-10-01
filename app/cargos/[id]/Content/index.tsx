@@ -2,7 +2,7 @@
 
 import { FC, useTransition } from 'react';
 import CargoForm from '@/components/Forms/CargoForm';
-import { ICargo } from '@/types';
+import { EnumCargoType, ICargo } from '@/types';
 import { useSession } from 'next-auth/react';
 import useNotify from '@/hooks/notify';
 import moment from 'moment';
@@ -26,7 +26,9 @@ const EditCargoContent: FC<IEditCargoContent> = ({ data }) => {
     const newValues: ICargo = {
       ...values,
       startDate: moment(values.startDate).set(startTime).format(),
-      unloadDate: moment(values.unloadDate).set(unloadTime).format(),
+      unloadDate: values.type === EnumCargoType.multiple ? '' : moment(values.unloadDate).set(unloadTime).format(),
+      unloadTime: values.type === EnumCargoType.multiple ? '' : values.unloadTime,
+      multipleUnload: values.type === EnumCargoType.single ? [] : values.multipleUnload,
     };
 
     const res = await updateCargoById(session?.tokens?.access.token || '', newValues);

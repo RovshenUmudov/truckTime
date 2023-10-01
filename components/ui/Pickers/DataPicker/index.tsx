@@ -18,7 +18,7 @@ interface IDatePicker {
     fromDate?: Date | undefined;
     label?: string;
     disabled?: boolean;
-    onBlur: (e: { target: { name: string; }; }) => void;
+    onBlur?: (e: { target: { name: string; }; }) => void;
 }
 
 const DatePicker: FC<IDatePicker> = ({
@@ -54,7 +54,9 @@ const DatePicker: FC<IDatePicker> = ({
           selected={value}
           onSelect={onChange}
           fromDate={fromDate}
-          onDayBlur={() => onBlur({ target: { name } })}
+          onDayBlur={() => {
+            if (onBlur) onBlur({ target: { name } });
+          }}
         />
       </PopoverContent>
     </Popover>

@@ -17,7 +17,7 @@ const CargoFeature: FC<ICargoFeature> = ({
   ${!noBorder ? 'border-b border-secondary' : ''} pb-2 items-center`}
   >
     <div className="text-sm text-muted-foreground">{`${title}:`}</div>
-    <div className="text-sm justify-self-end">{`${feature} ${prefix || ''}`}</div>
+    <div className="text-sm justify-self-end capitalize">{`${feature} ${prefix || ''}`}</div>
   </div>
 );
 

@@ -25,6 +25,6 @@ export async function POST(req: Request) {
 
     return new Response(JSON.stringify(tokens), { status: 200 });
   } catch (e) {
-    return new Response(JSON.stringify({ message: `Server error 123: ${e}` }), { status: 500 });
+    return new Response(JSON.stringify({ message: `Server error: ${e}` }), { status: 500 });
   }
 }

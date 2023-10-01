@@ -40,7 +40,7 @@ const MultipleUnload: FC<IUnload> = ({ formik }) => (
             index={index}
             value={unloading.breakTime}
             formik={formik}
-            prefix="h"
+            prefix="h:m"
             label="Break *"
             name="breakTime"
             placeholder="Type break time in hours"

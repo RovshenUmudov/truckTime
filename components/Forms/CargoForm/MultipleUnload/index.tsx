@@ -1,10 +1,9 @@
 'use client';
 
 import { FC } from 'react';
-import { clsx } from 'clsx';
 import { Button } from '@/components/ui/button';
 import { MinusCircle, Plus } from 'lucide-react';
-import { EnumCargoType, IUnload } from '@/types';
+import { IUnload } from '@/types';
 import { IInputProps } from '@/components/ui/input';
 import UnloadTimeField from '@/components/Forms/CargoForm/MultipleUnload/TimeField';
 import UnloadNumberField from '@/components/Forms/CargoForm/MultipleUnload/NumberField';
@@ -20,10 +19,7 @@ const MultipleUnload: FC<IUnload> = ({ formik }) => (
     {formik.values.multipleUnload.map((unloading, index) => (
       <div
         key={`fieldKey${index + 1}`}
-        className={clsx(
-          'grid grid-cols-[1fr_auto] gap-2 items-center',
-          formik.values.type === EnumCargoType.multiple ? 'bg-secondary p-5' : '',
-        )}
+        className="grid grid-cols-[1fr_auto] max-[768px]:grid-cols-1 gap-2 items-center bg-secondary p-5"
       >
         <div className="grid gap-5 grid-cols-2 max-[768px]:grid-cols-1">
           <UnloadDateField index={index} value={unloading.date} formik={formik} />
@@ -53,7 +49,7 @@ const MultipleUnload: FC<IUnload> = ({ formik }) => (
         </div>
         <Button
           disabled={formik.values.multipleUnload.length <= 1}
-          className="mt-4 p-3"
+          className="mt-4 p-3 max-[768px]:mt-2"
           onClick={() => {
             formik.setFieldValue(
               'multipleUnload',
@@ -65,6 +61,7 @@ const MultipleUnload: FC<IUnload> = ({ formik }) => (
           variant="ghost"
         >
           <MinusCircle className="h-4 w-4 text-destructive" />
+          <div className="hidden max-[768px]:block ml-2 text-destructive">Remove</div>
         </Button>
       </div>
     ))}

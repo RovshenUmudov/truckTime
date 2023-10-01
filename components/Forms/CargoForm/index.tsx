@@ -90,7 +90,7 @@ const CargoForm: FC<ICargoProps> = ({
 
   useEffect(() => {
     formik.setFieldTouched('totalDistance', false);
-    formik.setFieldValue('totalDistance', '');
+    formik.setFieldValue('totalDistance', initialValues?.totalDistance || defaultCargoFormValues.totalDistance);
   }, [formik.values.type]);
 
   return (

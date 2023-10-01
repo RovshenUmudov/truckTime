@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import UserAvatar from '@/components/Avatar';
-import { LogOut, Settings, User } from 'lucide-react';
+import { LogOut, User } from 'lucide-react';
 import Link from 'next/link';
 import { signOut } from 'next-auth/react';
 

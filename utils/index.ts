@@ -1,7 +1,7 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import { EnumCargoType, ICalculateCargo, ICargo, IMultipleUnload, ITime } from '@/types';
+import { EnumCargoType, ICargo, IMultipleUnload, ITime } from '@/types';
 import moment from 'moment';
 import { defaultCargoFormValues } from '@/components/Forms/CargoForm';
 
@@ -82,13 +82,10 @@ export const calculateDrivingTime = (distance: number, averageSpeed: number) => 
   const drivingSeconds = (distance / averageSpeed) * 3600;
   const duration = moment.duration(drivingSeconds, 'seconds');
 
-  return {
-    ...formatTime({
-      hours: duration.days() * 24 + duration.hours() || 0,
-      minutes: duration.minutes() || 0,
-    }),
-    durationInSeconds: duration.asSeconds() || 0,
-  };
+  return formatTime({
+    hours: duration.days() * 24 + duration.hours() || 0,
+    minutes: duration.minutes() || 0,
+  });
 };
 
 export const calculateBreaks = (seconds: number) => {
@@ -134,13 +131,13 @@ export const calculateCargo = (values: ICargo) => {
     type,
   } = values;
 
-  let result: ICalculateCargo = {
+  let result: Partial<ICargo> = {
     remainingTime: null,
     driving: null,
     duration: null,
     oneHoursBreak: 0,
-    elevenHoursBreak: 0,
     totalDistance: 0,
+    eightHoursBreak: 0,
   };
 
   let breaks = 0;
@@ -169,7 +166,7 @@ export const calculateCargo = (values: ICargo) => {
     const differenceInSeconds = unloadDataTime.diff(loadDateTime, 'seconds');
     const remainingTimeTodayInSeconds = remainingTimeToSeconds(remainingWorkHours, differenceInSeconds);
     const driving = calculateDrivingTime(distance, averageSpeed);
-    const { oneHoursBreak, elevenHoursBreak } = calculateBreaks(driving.durationInSeconds);
+    const { oneHoursBreak, elevenHoursBreak } = calculateBreaks(driving.totalInSeconds || 0);
 
     const totalDuration = moment.duration(differenceInSeconds, 'seconds');
 
@@ -182,7 +179,7 @@ export const calculateCargo = (values: ICargo) => {
     const duration = moment.duration(
       adjustedDifference
         - breaks
-        - driving.durationInSeconds
+        - (driving.totalInSeconds || 0)
         - (oneHoursBreak * 3600)
         - ((elevenHoursBreak * 39600) - (eightHoursBreak * 7200)),
       'seconds',
@@ -219,9 +216,10 @@ const handleUnloadDate = (values: ICargo, lastElement: IMultipleUnload) => {
   return null;
 };
 
-export const formatTime = ({ hours, minutes }: ITime) => ({
+export const formatTime = ({ hours, minutes }: ITime): ITime => ({
   hours,
   minutes: hours < 0 ? Math.abs(minutes) : minutes,
+  totalInSeconds: (hours * 3600) + (minutes * 60) || 0,
 });
 
 export const beatifyTime = ({ hours, minutes }: ITime, withSign = true) => {

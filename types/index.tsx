@@ -70,22 +70,16 @@ export interface ICargo {
   oneHoursBreak: number;
   remainingWorkHours: string;
   remainingTime: ITime | null;
-  driving: IDriving | null;
+  driving: ITime | null;
   duration: ITime | null;
   type: EnumCargoType;
 }
 
-export type ITime = { hours: number; minutes: number; second?: number; totalInSeconds?: number; }
-
-export type IDriving = ITime & { durationInSeconds: number; }
-
-export interface ICalculateCargo {
-  remainingTime: ITime | null;
-  driving: IDriving | null;
-  duration: ITime | null;
-  oneHoursBreak: number;
-  elevenHoursBreak: number;
-  totalDistance: number;
+export interface ITime {
+  hours: number;
+  minutes: number;
+  second?: number;
+  totalInSeconds?: number;
 }
 
 export interface IParams {

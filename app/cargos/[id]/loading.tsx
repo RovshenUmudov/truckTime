@@ -8,6 +8,7 @@ const Loading: FC = () => (
     <Container disableHeader disableFooter>
       <Skeleton className="h-[250px] w-full max-[1250px]:h-auto max-[1250px]:pt-[21%]" />
       <Skeleton className="h-8 w-[250px] my-5" />
+      <Skeleton className="h-[46px] max-w-[700px] my-5" />
       <div className="max-w-[700px] mt-5">
         <div className="grid gap-5">
           <div className="grid gap-5 grid-cols-2 max-[768px]:grid-cols-1">

@@ -11,10 +11,7 @@ const Loading: FC = () => (
       <Skeleton className="h-[46px] w-full max-w-[700px] my-5" />
       <div className="max-w-[700px] mt-5">
         <div className="grid gap-5">
-          <div className="grid gap-5 grid-cols-2 max-[768px]:grid-cols-1">
-            <Skeleton className="h-10 w-full" />
-            <Skeleton className="h-10 w-full" />
-          </div>
+          <Skeleton className="h-10 w-full" />
           <div className="grid gap-5 grid-cols-2 max-[768px]:grid-cols-1">
             <Skeleton className="h-10 w-full" />
             <Skeleton className="h-10 w-full" />

@@ -29,7 +29,7 @@ const MultipleUnload: FC<IUnload> = ({ formik }) => (
             value={unloading.distance}
             formik={formik}
             prefix="km"
-            label="Distance"
+            label="Distance *"
             name="distance"
             numberField
             placeholder="Type distance in km"
@@ -41,7 +41,7 @@ const MultipleUnload: FC<IUnload> = ({ formik }) => (
             value={unloading.breakTime}
             formik={formik}
             prefix="h"
-            label="Break"
+            label="Break *"
             name="breakTime"
             placeholder="Type break time in hours"
             maxLength={5}

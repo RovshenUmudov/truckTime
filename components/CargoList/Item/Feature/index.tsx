@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import { clsx } from 'clsx';
 
 interface ICargoFeature {
     title: string;
@@ -17,7 +18,9 @@ const CargoFeature: FC<ICargoFeature> = ({
   ${!noBorder ? 'border-b border-secondary' : ''} pb-2 items-center`}
   >
     <div className="text-sm text-muted-foreground">{`${title}:`}</div>
-    <div className="text-sm justify-self-end capitalize">{`${feature} ${prefix || ''}`}</div>
+    <div className={clsx('text-sm justify-self-end', title === 'Type' ? 'capitalize' : '')}>
+      {`${feature} ${prefix || ''}`}
+    </div>
   </div>
 );
 

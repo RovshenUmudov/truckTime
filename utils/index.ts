@@ -222,8 +222,8 @@ export const formatTime = ({ hours, minutes }: ITime): ITime => ({
 });
 
 export const beatifyTime = ({ hours, minutes }: ITime, withSign = true, withOnTime = true) => {
-  const hoursPrefix = Math.abs(hours) > 1 ? 'hours' : 'hour';
-  const minutesPrefix = Math.abs(minutes) > 1 ? 'minutes' : 'minutes';
+  const hoursPrefix = Math.abs(hours) > 1 ? 'hrs' : 'hr';
+  const minutesPrefix = Math.abs(minutes) > 1 ? 'mins' : 'mins';
   const sign = hours < 0 || minutes < 0 ? '-' : '+';
 
   if (hours === 0 && minutes === 0) {

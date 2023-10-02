@@ -208,14 +208,14 @@ const CargoForm: FC<ICargoProps> = ({
           />
           <Input
             name="oneHoursBreak"
-            prefix="hrs."
+            prefix="hrs"
             label="One Hours Break"
             placeholder="0"
             value={formik.values.oneHoursBreak || 0}
             disabled
           />
           <Input
-            prefix="hrs."
+            prefix="hrs"
             label="Total Rest Time"
             placeholder="0"
             value={(formik.values.oneHoursBreak

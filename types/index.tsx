@@ -66,7 +66,7 @@ export interface ICargo {
   unloadDate: string | undefined;
   unloadTime: string | undefined;
   averageSpeed: number;
-  totalDistance: number;
+  totalDistance: number | undefined;
   eightHoursRest: number;
   oneHoursBreak: number;
   totalRestTime: number;

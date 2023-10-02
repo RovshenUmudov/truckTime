@@ -43,7 +43,7 @@ export const defaultCargoFormValues: ICargo = {
   unloadDate: undefined,
   unloadTime: '',
   averageSpeed: 77,
-  totalDistance: 0,
+  totalDistance: undefined,
   totalRestTime: 0,
   type: EnumCargoType.single,
   eightHoursRest: 0,
@@ -79,6 +79,7 @@ const CargoForm: FC<ICargoProps> = ({
     const result = calculateCargo(formik.values, initialValues?.userRestTime || session.user.restTime || 0);
 
     setState(result || null);
+
     if (formik.values.type === EnumCargoType.multiple) {
       formik.setFieldValue('totalDistance', result.totalDistance || '');
     }
@@ -178,12 +179,13 @@ const CargoForm: FC<ICargoProps> = ({
             label="Todal Distance *"
             placeholder="Type distance in km"
             disabled={formik.isSubmitting || formik.values.type === EnumCargoType.multiple}
-            value={formik.values.totalDistance || ''}
+            value={formik.values.totalDistance === undefined ? '' : formik.values.totalDistance}
             maxLength={5}
             onChange={(e) => {
               if (numberRegExp.test(e.target.value)) {
                 formik.setFieldValue('totalDistance', parseFloat(e.target.value));
               }
+
               if (e.target.value === '') formik.handleChange(e);
             }}
             onBlur={formik.handleBlur}
@@ -224,7 +226,6 @@ const CargoForm: FC<ICargoProps> = ({
             name="totalRestTime"
             prefix="hrs"
             label="Total Rest Time"
-            placeholder="0"
             disabled
             value={state ? state.totalRestTime : (initialValues?.totalRestTime || 0)}
           />

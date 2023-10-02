@@ -6,7 +6,7 @@ import { Bed, Clock4, Loader2 } from 'lucide-react';
 import { useFormik } from 'formik';
 import { validationCargo } from '@/utils/validations';
 import DatePicker from '@/components/ui/Pickers/DataPicker';
-import { calculateCargo, eightHoursBreakCountRegExp, isObjEqual, numberRegExp } from '@/utils';
+import { calculateCargo, eightHoursRestCountRegExp, isObjEqual, numberRegExp } from '@/utils';
 import { EnumCargoType, ICargo, IOption } from '@/types';
 import { useContextUnsavedChanges } from '@/context/unsavedChanges';
 import moment from 'moment';
@@ -16,6 +16,7 @@ import MultipleUnload from '@/components/Forms/CargoForm/MultipleUnload';
 import SingleUnload from '@/components/Forms/CargoForm/SingleUnload';
 import CargoFormPrompt from '@/components/Forms/CargoForm/FormPrompt';
 import TimeField from 'react-simple-timefield';
+import { useSession } from 'next-auth/react';
 
 interface ICargoProps {
   initialValues?: ICargo;
@@ -43,9 +44,10 @@ export const defaultCargoFormValues: ICargo = {
   unloadTime: '',
   averageSpeed: 77,
   totalDistance: 0,
-  elevenHoursBreak: 0,
+  totalRestTime: 0,
   type: EnumCargoType.single,
-  eightHoursBreak: 0,
+  eightHoursRest: 0,
+  userRestTime: 11,
   oneHoursBreak: 0,
   remainingWorkHours: '08:00',
   remainingTime: null,
@@ -59,6 +61,7 @@ const CargoForm: FC<ICargoProps> = ({
   handleDelete,
   averageSpeed,
 }) => {
+  const { data: session } = useSession();
   const { handleUnsavedChanges } = useContextUnsavedChanges();
   const [state, setState] = useState<Partial<ICargo> | null>(null);
 
@@ -71,10 +74,11 @@ const CargoForm: FC<ICargoProps> = ({
   });
 
   useEffect(() => {
-    const result = calculateCargo(formik.values);
+    if (!session?.user) return;
+
+    const result = calculateCargo(formik.values, initialValues?.userRestTime || session.user.restTime || 0);
 
     setState(result || null);
-    formik.setFieldValue('oneHoursBreak', result.oneHoursBreak);
 
     if (formik.values.type === EnumCargoType.multiple) {
       formik.setFieldValue('totalDistance', result.totalDistance || '');
@@ -87,7 +91,7 @@ const CargoForm: FC<ICargoProps> = ({
     }
 
     handleUnsavedChanges(false);
-  }, [formik.values]);
+  }, [formik.values, session?.user]);
 
   useEffect(() => {
     formik.setFieldTouched('totalDistance', false);
@@ -179,9 +183,10 @@ const CargoForm: FC<ICargoProps> = ({
             maxLength={5}
             min={1}
             onChange={(e) => {
-              if (e.target.value === '' || numberRegExp.test(e.target.value)) {
-                formik.handleChange(e);
+              if (numberRegExp.test(e.target.value)) {
+                formik.setFieldValue('totalDistance', parseFloat(e.target.value));
               }
+              if (e.target.value === '') formik.handleChange(e);
             }}
             onBlur={formik.handleBlur}
             error={formik.touched.totalDistance && formik.errors.totalDistance?.length ? (
@@ -197,13 +202,16 @@ const CargoForm: FC<ICargoProps> = ({
         </div>
         <div className="grid gap-5 grid-cols-3 max-[768px]:grid-cols-1">
           <Input
-            name="eightHoursBreak"
+            name="eightHoursRest"
             label="Eight Hours Rest"
             placeholder="0"
             icon={<Bed className="w-4 h-4" />}
-            value={formik.values.eightHoursBreak}
+            value={formik.values.eightHoursRest || ''}
             onChange={(e) => {
-              if (eightHoursBreakCountRegExp.test(e.target.value) || e.target.value === '') formik.handleChange(e);
+              if (eightHoursRestCountRegExp.test(e.target.value)) {
+                formik.setFieldValue('eightHoursRest', parseFloat(e.target.value));
+              }
+              if (e.target.value === '') formik.handleChange(e);
             }}
           />
           <Input
@@ -211,17 +219,15 @@ const CargoForm: FC<ICargoProps> = ({
             prefix="hrs"
             label="One Hours Break"
             placeholder="0"
-            value={formik.values.oneHoursBreak || 0}
+            value={state?.oneHoursBreak || 0}
             disabled
           />
           <Input
             prefix="hrs"
             label="Total Rest Time"
             placeholder="0"
-            value={(formik.values.oneHoursBreak
-              + (formik.values.elevenHoursBreak * 11))
-              - (formik.values.eightHoursBreak * 2)}
             disabled
+            value={initialValues?.totalRestTime || state?.totalRestTime || 0}
           />
         </div>
         <div className="flex justify-end gap-5">

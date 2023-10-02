@@ -71,12 +71,8 @@ export function isObjEqual<T>(object1: T, object2: T): boolean {
   return true;
 }
 
-export const asyncDelay = (ms: number) => new Promise((resolve) => {
-  setTimeout(resolve, ms);
-});
-
 export const numberRegExp = /^[0-9]*$/;
-export const eightHoursBreakCountRegExp = /^[0-3]$/;
+export const eightHoursRestCountRegExp = /^[0-3]$/;
 
 export const calculateDrivingTime = (distance: number, averageSpeed: number) => {
   const drivingSeconds = (distance / averageSpeed) * 3600;
@@ -93,7 +89,7 @@ export const calculateBreaks = (seconds: number) => {
 
   return {
     oneHoursBreak: breaks < 1 ? 0 : Math.round(breaks),
-    elevenHoursBreak: breaks < 1 ? 0 : Math.floor(breaks),
+    restTime: breaks < 1 ? 0 : Math.floor(breaks),
   };
 };
 
@@ -119,13 +115,13 @@ export const remainingTimeToSeconds = (value: string, differenceInSeconds: numbe
   return eightHoursInSeconds - (totalInSeconds || 0);
 };
 
-export const calculateCargo = (values: ICargo) => {
+export const calculateCargo = (values: ICargo, userRestTime: number) => {
   const {
     remainingWorkHours,
     startDate,
     startTime,
     totalDistance,
-    eightHoursBreak,
+    eightHoursRest,
     averageSpeed,
     multipleUnload,
     type,
@@ -133,8 +129,8 @@ export const calculateCargo = (values: ICargo) => {
 
   let result: Partial<ICargo> = {
     oneHoursBreak: 0,
-    eightHoursBreak: 0,
-    elevenHoursBreak: 0,
+    eightHoursRest: 0,
+    totalRestTime: 0,
   };
 
   let breaks = 0;
@@ -163,7 +159,7 @@ export const calculateCargo = (values: ICargo) => {
     const differenceInSeconds = unloadDataTime.diff(loadDateTime, 'seconds');
     const remainingTimeTodayInSeconds = remainingTimeToSeconds(remainingWorkHours, differenceInSeconds);
     const driving = calculateDrivingTime(distance, averageSpeed);
-    const { oneHoursBreak, elevenHoursBreak } = calculateBreaks(driving.totalInSeconds || 0);
+    const { oneHoursBreak, restTime } = calculateBreaks(driving.totalInSeconds || 0);
 
     const totalDuration = moment.duration(differenceInSeconds, 'seconds');
 
@@ -178,7 +174,7 @@ export const calculateCargo = (values: ICargo) => {
         - breaks
         - (driving.totalInSeconds || 0)
         - (oneHoursBreak * 3600)
-        - ((elevenHoursBreak * 39600) - (eightHoursBreak * 7200)),
+        - ((restTime * (userRestTime * 3600)) - ((eightHoursRest || 0) * 7200)),
       'seconds',
     );
 
@@ -194,8 +190,9 @@ export const calculateCargo = (values: ICargo) => {
       }),
       driving,
       totalDistance: distance,
-      elevenHoursBreak,
-      eightHoursBreak,
+      userRestTime,
+      totalRestTime: oneHoursBreak + (restTime * userRestTime),
+      eightHoursRest,
       oneHoursBreak,
     };
   }

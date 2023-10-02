@@ -1,3 +1,5 @@
+'use client';
+
 import { FC, useMemo } from 'react';
 import { EnumCargoType, ICargo } from '@/types';
 import Link from 'next/link';
@@ -6,7 +8,11 @@ import CargoFeature from '@/components/CargoList/Item/Feature';
 import moment from 'moment';
 import { beatifyTime, splitTimeStr } from '@/utils';
 
-const CargoItem: FC<{data: ICargo;}> = ({ data }) => {
+interface ICargoItem {
+  data: ICargo;
+}
+
+const CargoItem: FC<ICargoItem> = ({ data }) => {
   const lastUnload = useMemo(() => {
     if (data.type === EnumCargoType.multiple) {
       const [lastElem] = data.multipleUnload.slice(-1);
@@ -49,7 +55,7 @@ const CargoItem: FC<{data: ICargo;}> = ({ data }) => {
             <CargoFeature
               title="Total Rest Time"
               feature={beatifyTime({
-                hours: (data.oneHoursBreak + (data.elevenHoursBreak * 11)) - (data.eightHoursBreak * 2),
+                hours: data.totalRestTime,
                 minutes: 0,
               }, false, false)}
             />

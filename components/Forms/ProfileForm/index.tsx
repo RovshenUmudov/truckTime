@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
 import { useFormik } from 'formik';
 import { validationProfile } from '@/utils/validations';
-import { isObjEqual } from '@/utils';
+import { isObjEqual, numberRegExp } from '@/utils';
 import { IUserMe } from '@/types';
 import { useContextUnsavedChanges } from '@/context/unsavedChanges';
 
@@ -19,10 +19,13 @@ const ProfileForm: FC<IProfileProps> = ({
   initialValues,
   handleSubmit,
 }) => {
-  const { handleUnsavedChanges } = useContextUnsavedChanges();
+  const { handleUnsavedChanges, unsavedChanges } = useContextUnsavedChanges();
 
   const formik = useFormik<Partial<IUserMe>>({
-    initialValues: { averageSpeed: initialValues.averageSpeed || 77 },
+    initialValues: {
+      averageSpeed: initialValues.averageSpeed || 77,
+      restTime: 11,
+    },
     validationSchema: validationProfile,
     onSubmit: (values, { setSubmitting }) => {
       handleSubmit(values, setSubmitting);
@@ -30,7 +33,10 @@ const ProfileForm: FC<IProfileProps> = ({
   });
 
   useEffect(() => {
-    if (!isObjEqual(formik.values, { averageSpeed: initialValues.averageSpeed })) {
+    if (!isObjEqual(formik.values, {
+      averageSpeed: initialValues.averageSpeed,
+      restTime: initialValues.restTime,
+    })) {
       handleUnsavedChanges(true);
 
       return;
@@ -57,14 +63,33 @@ const ProfileForm: FC<IProfileProps> = ({
           disabled={formik.isSubmitting}
           value={formik.values.averageSpeed}
           onChange={(e) => {
-            formik.handleChange(e);
-            if (e.target.value.length) {
+            if (numberRegExp.test(e.target.value)) {
               formik.setFieldValue('averageSpeed', parseFloat(e.target.value));
             }
+            if (e.target.value === '') formik.handleChange(e);
           }}
           onBlur={formik.handleBlur}
           error={formik.touched.averageSpeed && formik.errors.averageSpeed?.length ? (
             formik.errors.averageSpeed
+          ) : null}
+        />
+        <Input
+          prefix="hrs"
+          name="restTime"
+          placeholder="Rest Time"
+          label="Rest Time *"
+          helper="Usually rest time is equal to 11 hours"
+          disabled={formik.isSubmitting}
+          value={formik.values.restTime}
+          onChange={(e) => {
+            if (numberRegExp.test(e.target.value)) {
+              formik.setFieldValue('restTime', parseFloat(e.target.value));
+            }
+            if (e.target.value === '') formik.handleChange(e);
+          }}
+          onBlur={formik.handleBlur}
+          error={formik.touched.restTime && formik.errors.restTime?.length ? (
+            formik.errors.restTime
           ) : null}
         />
       </div>
@@ -72,7 +97,7 @@ const ProfileForm: FC<IProfileProps> = ({
         <Button
           disabled={formik.isSubmitting
               || Object.keys(formik.errors).length > 0
-              || initialValues.averageSpeed === formik.values.averageSpeed}
+              || !unsavedChanges}
           className="max-w-[200px] mt-5"
           type="submit"
         >

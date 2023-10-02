@@ -40,6 +40,7 @@ export interface IUserMe {
   email: string;
   imageURL?: string;
   averageSpeed: number;
+  restTime: number;
   role: EnumUserRole;
 }
 
@@ -66,9 +67,10 @@ export interface ICargo {
   unloadTime: string | undefined;
   averageSpeed: number;
   totalDistance: number;
-  eightHoursBreak: number;
+  eightHoursRest: number;
   oneHoursBreak: number;
-  elevenHoursBreak: number;
+  totalRestTime: number;
+  userRestTime: number;
   remainingWorkHours: string;
   remainingTime: ITime | null;
   driving: ITime | null;

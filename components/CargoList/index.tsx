@@ -35,7 +35,7 @@ const CargoList: FC<ICargoList> = async ({
     <div className={clsx('mb-5', className)}>
       <PageTitle title={title} />
       <div className="grid gap-5 grid-cols-3 max-[1200px]:grid-cols-2 max-[768px]:grid-cols-1">
-        {cargos.data.data.map((cargo) => <CargoItem data={cargo} key={crypto.randomUUID()} />)}
+        {cargos.data.data.map((cargo) => <CargoItem key={crypto.randomUUID()} data={cargo} />)}
       </div>
       {cargos.data.total && limit && cargos.data.total > limit ? (
         <div className="flex justify-center mt-5">

@@ -38,7 +38,7 @@ export async function POST(req: Request) {
     let user = await User.findOne({ email: decodedToken.email });
 
     if (!user) {
-      user = await User.create({ email: decodedToken.email, averageSpeed: 77, role: 'user' });
+      user = await User.create({ email: decodedToken.email, averageSpeed: 77, role: 'user', restTime: 11 });
     }
 
     const tokens = createJWT(user.id);

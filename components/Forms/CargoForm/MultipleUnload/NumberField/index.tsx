@@ -21,9 +21,10 @@ const UnloadNumberField: FC<IMultipleUnloadField> = ({
     value={value || ''}
     onBlur={formik.handleBlur}
     onChange={(e) => {
-      if (e.target.value === '' || numberRegExp.test(e.target.value)) {
-        formik.handleChange(e);
+      if (numberRegExp.test(e.target.value)) {
+        formik.setFieldValue(`multipleUnload.${index}.${name}`, parseFloat(e.target.value));
       }
+      if (e.target.value === '') formik.handleChange(e);
     }}
     error={formik.touched.multipleUnload
       && formik.touched.multipleUnload[index]?.[name as keyof IMultipleUnload]

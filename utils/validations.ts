@@ -144,6 +144,10 @@ export const validationProfile = yup.object().shape({
     .required('This field is required')
     .min(1, 'Min average speed is 1 km')
     .max(100, 'Max average speed is 100 km'),
+  restTime: yup.number()
+    .required('This field is required')
+    .min(1, 'Min rest time is 1 hour')
+    .max(48, 'Max rest time is 48 hours'),
 });
 
 export const validationChangePassword = yup.object().shape({

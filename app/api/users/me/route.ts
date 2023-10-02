@@ -31,6 +31,7 @@ export async function GET(req: Request) {
       email: user.get('email'),
       averageSpeed: user.get('averageSpeed'),
       role: user.get('role'),
+      restTime: user.get('restTime'),
     }), { status: 200 });
   } catch (e) {
     return new Response(JSON.stringify({ message: `Server error: ${e}` }), { status: 500 });

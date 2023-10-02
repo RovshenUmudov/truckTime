@@ -79,7 +79,6 @@ const CargoForm: FC<ICargoProps> = ({
     const result = calculateCargo(formik.values, initialValues?.userRestTime || session.user.restTime || 0);
 
     setState(result || null);
-
     if (formik.values.type === EnumCargoType.multiple) {
       formik.setFieldValue('totalDistance', result.totalDistance || '');
     }
@@ -181,7 +180,6 @@ const CargoForm: FC<ICargoProps> = ({
             disabled={formik.isSubmitting || formik.values.type === EnumCargoType.multiple}
             value={formik.values.totalDistance || ''}
             maxLength={5}
-            min={1}
             onChange={(e) => {
               if (numberRegExp.test(e.target.value)) {
                 formik.setFieldValue('totalDistance', parseFloat(e.target.value));
@@ -223,11 +221,12 @@ const CargoForm: FC<ICargoProps> = ({
             disabled
           />
           <Input
+            name="totalRestTime"
             prefix="hrs"
             label="Total Rest Time"
             placeholder="0"
             disabled
-            value={initialValues?.totalRestTime || state?.totalRestTime || 0}
+            value={state ? state.totalRestTime : (initialValues?.totalRestTime || 0)}
           />
         </div>
         <div className="flex justify-end gap-5">

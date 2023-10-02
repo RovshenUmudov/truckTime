@@ -2,7 +2,7 @@
 
 import { FC, useEffect, useState } from 'react';
 import { Input } from '@/components/ui/input';
-import { Bed, Clock4, Coffee, Loader2 } from 'lucide-react';
+import { Bed, Clock4, Loader2 } from 'lucide-react';
 import { useFormik } from 'formik';
 import { validationCargo } from '@/utils/validations';
 import DatePicker from '@/components/ui/Pickers/DataPicker';
@@ -43,6 +43,7 @@ export const defaultCargoFormValues: ICargo = {
   unloadTime: '',
   averageSpeed: 77,
   totalDistance: 0,
+  elevenHoursBreak: 0,
   type: EnumCargoType.single,
   eightHoursBreak: 0,
   oneHoursBreak: 0,
@@ -200,7 +201,6 @@ const CargoForm: FC<ICargoProps> = ({
             label="Eight Hours Break"
             placeholder="0"
             icon={<Bed className="w-4 h-4" />}
-            helper="Each break is equal to 9 hours"
             value={formik.values.eightHoursBreak}
             onChange={(e) => {
               if (eightHoursBreakCountRegExp.test(e.target.value) || e.target.value === '') formik.handleChange(e);
@@ -208,10 +208,9 @@ const CargoForm: FC<ICargoProps> = ({
           />
           <Input
             name="oneHoursBreak"
-            icon={<Coffee className="w-4 h-4" />}
+            prefix="h"
             label="One Hours Break"
             placeholder="0"
-            helper="Each break is equal to 1 hour"
             value={formik.values.oneHoursBreak || 0}
             onChange={formik.handleChange}
             disabled

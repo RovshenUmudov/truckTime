@@ -17,7 +17,7 @@ const NewCargo: FC = async () => {
   return (
     <Container>
       <Banner src="/new-cargo-banner.jpg" />
-      <div className="max-w-[700px] mb-5">
+      <div className="max-w-[768px] mb-5">
         <PageTitle title="Create new cargo transportation" />
         <Content averageSpeed={session?.user?.averageSpeed || 77} />
       </div>

@@ -195,10 +195,10 @@ const CargoForm: FC<ICargoProps> = ({
             disabled
           />
         </div>
-        <div className="grid gap-5 grid-cols-2 max-[768px]:grid-cols-1">
+        <div className="grid gap-5 grid-cols-3 max-[768px]:grid-cols-1">
           <Input
             name="eightHoursBreak"
-            label="Eight Hours Break"
+            label="Eight Hours Rest"
             placeholder="0"
             icon={<Bed className="w-4 h-4" />}
             value={formik.values.eightHoursBreak}
@@ -208,11 +208,19 @@ const CargoForm: FC<ICargoProps> = ({
           />
           <Input
             name="oneHoursBreak"
-            prefix="h"
+            prefix="hrs."
             label="One Hours Break"
             placeholder="0"
             value={formik.values.oneHoursBreak || 0}
-            onChange={formik.handleChange}
+            disabled
+          />
+          <Input
+            prefix="hrs."
+            label="Total Rest Time"
+            placeholder="0"
+            value={(formik.values.oneHoursBreak
+              + (formik.values.elevenHoursBreak * 11))
+              - (formik.values.eightHoursBreak * 2)}
             disabled
           />
         </div>

@@ -11,6 +11,7 @@ interface IInputSelect {
     label?: string;
     disabled?: boolean;
     handleChange: (value: string) => void;
+    className?: string;
 }
 
 const InputSelect: FC<IInputSelect> = ({
@@ -21,8 +22,9 @@ const InputSelect: FC<IInputSelect> = ({
   handleChange,
   disabled = false,
   name,
+  className = '',
 }) => (
-  <div>
+  <div className={className}>
     {label ? <Label>{label}</Label> : null}
     <Select
       name={name}
@@ -34,8 +36,8 @@ const InputSelect: FC<IInputSelect> = ({
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>
-        {options?.map(({ value, label }) => (
-          <SelectItem key={crypto.randomUUID()} value={value}>{label}</SelectItem>
+        {options?.map(({ value, label, disabled = false }) => (
+          <SelectItem key={crypto.randomUUID()} value={value} disabled={disabled}>{label}</SelectItem>
         ))}
       </SelectContent>
     </Select>

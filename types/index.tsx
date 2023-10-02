@@ -100,6 +100,7 @@ export interface IMetadataParams {
 export type IOption = {
   label: string;
   value: string;
+  disabled?: boolean;
 }
 
 export interface IUnload {

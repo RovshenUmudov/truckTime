@@ -18,6 +18,7 @@ export async function GET(req: Request) {
     const cargos: ICargo[] = await Cargo.find({
       ...(user.get('role') !== EnumUserRole.admin && { userId: user.get('_id') }),
       title: { $regex: new RegExp(searchParams.get('search') || '', 'i') },
+      ...(searchParams.get('type') && { type: searchParams.get('type') }),
     })
       .limit(+(searchParams.get('limit') || total))
       .sort({ created: sort });

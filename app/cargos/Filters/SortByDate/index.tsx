@@ -1,9 +1,10 @@
 'use client';
 
 import { FC } from 'react';
-import { useRouter } from 'next/navigation';
 import InputSelect from '@/components/ui/InputSelect';
 import { IOption } from '@/types';
+import { IFilters } from '@/app/cargos/Filters';
+import useQueryString from '@/hooks/queryString';
 
 enum EnumCargoOrder {
     'ASC'= 'ASC',
@@ -15,21 +16,20 @@ const optionsList: IOption[] = [
   { label: 'Oldest', value: EnumCargoOrder.DESC },
 ];
 
-const SortCargosByDate: FC = () => {
-  const router = useRouter();
+const SortCargosByDate: FC<IFilters> = ({ className = '' }) => {
+  const { updateQuery } = useQueryString();
 
-  const handleChange = (value: string) => {
-    router.push(`/cargos/${value.length ? `?sort=${value}` : ''}`);
-  };
+  const handleChange = (value: string) => updateQuery('sort', value);
 
   return (
     <InputSelect
       name="sort"
       label="Sort"
+      className={className}
       placeholder="Sort"
       options={optionsList}
       handleChange={handleChange}
-      defaultValue="ASC"
+      defaultValue={EnumCargoOrder.ASC}
     />
   );
 };

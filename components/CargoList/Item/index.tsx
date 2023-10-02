@@ -46,6 +46,13 @@ const CargoItem: FC<{data: ICargo;}> = ({ data }) => {
             {data.driving?.hours !== undefined && data.driving?.minutes !== undefined ? (
               <CargoFeature title="Driving time" feature={beatifyTime(data.driving, false)} />
             ) : null}
+            <CargoFeature
+              title="Total Rest Time"
+              feature={beatifyTime({
+                hours: (data.oneHoursBreak + (data.elevenHoursBreak * 11)) - (data.eightHoursBreak * 2),
+                minutes: 0,
+              }, false, false)}
+            />
             {data.remainingTime?.hours !== undefined && data.remainingTime?.minutes !== undefined ? (
               <CargoFeature title="Remaining time" feature={beatifyTime(data.remainingTime)} noBorder />
             ) : null}

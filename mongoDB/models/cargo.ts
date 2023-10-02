@@ -24,6 +24,7 @@ const cargoSchema = new Schema<ICargoModel>({
   averageSpeed: { type: Number, required: true },
   totalDistance: { type: Number, required: true },
   eightHoursBreak: { type: Number, required: false },
+  elevenHoursBreak: { type: Number, required: false },
   oneHoursBreak: { type: Number, required: false },
   remainingWorkHours: { type: String, required: false },
   type: { type: String, required: true },

@@ -132,11 +132,9 @@ export const calculateCargo = (values: ICargo) => {
   } = values;
 
   let result: Partial<ICargo> = {
-    remainingTime: null,
-    driving: null,
-    duration: null,
     oneHoursBreak: 0,
     eightHoursBreak: 0,
+    elevenHoursBreak: 0,
   };
 
   let breaks = 0;
@@ -196,6 +194,8 @@ export const calculateCargo = (values: ICargo) => {
       }),
       driving,
       totalDistance: distance,
+      elevenHoursBreak,
+      eightHoursBreak,
       oneHoursBreak,
     };
   }
@@ -221,13 +221,13 @@ export const formatTime = ({ hours, minutes }: ITime): ITime => ({
   totalInSeconds: (hours * 3600) + (minutes * 60) || 0,
 });
 
-export const beatifyTime = ({ hours, minutes }: ITime, withSign = true) => {
+export const beatifyTime = ({ hours, minutes }: ITime, withSign = true, withOnTime = true) => {
   const hoursPrefix = Math.abs(hours) > 1 ? 'hours' : 'hour';
   const minutesPrefix = Math.abs(minutes) > 1 ? 'minutes' : 'minutes';
   const sign = hours < 0 || minutes < 0 ? '-' : '+';
 
   if (hours === 0 && minutes === 0) {
-    return 'On time';
+    return withOnTime ? 'On time' : '-';
   }
 
   return `${withSign ? sign : ''} ${Math.abs(hours) ? `${`${Math.abs(hours)} ${hoursPrefix}`}` : ''}

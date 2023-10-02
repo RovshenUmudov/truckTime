@@ -68,6 +68,7 @@ export interface ICargo {
   totalDistance: number;
   eightHoursBreak: number;
   oneHoursBreak: number;
+  elevenHoursBreak: number;
   remainingWorkHours: string;
   remainingTime: ITime | null;
   driving: ITime | null;

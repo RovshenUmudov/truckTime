@@ -24,7 +24,7 @@ const ProfileForm: FC<IProfileProps> = ({
   const formik = useFormik<Partial<IUserMe>>({
     initialValues: {
       averageSpeed: initialValues.averageSpeed || 77,
-      restTime: 11,
+      restTime: initialValues.restTime || 11,
     },
     validationSchema: validationProfile,
     onSubmit: (values, { setSubmitting }) => {

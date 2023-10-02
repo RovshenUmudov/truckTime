@@ -89,7 +89,7 @@ export const calculateBreaks = (seconds: number) => {
 
   return {
     oneHoursBreak: breaks < 1 ? 0 : Math.round(breaks),
-    restTime: breaks < 1 ? 0 : Math.floor(breaks),
+    restTime: breaks <= 1 ? 0 : Math.floor(breaks),
   };
 };
 

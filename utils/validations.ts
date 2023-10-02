@@ -112,14 +112,14 @@ export const validationCargo = yup.object().shape({
     'is-before-max',
     'Maximum is 8 hours',
     (value) => new Date(`1970-01-01T${value}`) <= new Date('1970-01-01T08:00'),
-  ).required('Time is required'),
+  ).required('This field is required'),
   unloadDate: yup.string().when('type', ([type], schema) => {
-    if (type === EnumCargoType.single) return yup.string().required('Field is required');
+    if (type === EnumCargoType.single) return yup.string().required('This field is required');
 
     return schema;
   }),
   unloadTime: yup.string().when('type', ([type], schema) => {
-    if (type === EnumCargoType.single) return yup.string().required('Field is required');
+    if (type === EnumCargoType.single) return yup.string().required('This field is required');
 
     return schema;
   }),
@@ -184,96 +184,6 @@ export const validationSignInPhoneAndPassword = yup.object().shape({
 export const validationForgotPassword = yup.object().shape({
   email,
 });
-export const validationAdminEdit = yup.object().shape({
-  firstName,
-  lastName,
-  email,
-});
-
-export const validationPercentage = yup.object().shape({
-  percentage,
-});
-
-export const validationCreateProfile = {
-  personalInfo: yup.object().shape({
-    firstName,
-    lastName,
-    yearOfBirth: yup.string()
-      .required('This field is required'),
-  }),
-  address: yup.object().shape({
-    country: yup.string().required('This field is required'),
-    state: yup.string().required('This field is required'),
-    address: limitSymbols200,
-    city: limitSymbols200,
-    zipCode,
-  }),
-  addressNotResident: yup.object().shape({
-    country: yup.string().required('This field is required'),
-  }),
-  profile: yup.object().shape({
-    username,
-  }),
-};
-
-export const validationProfileUpdate = yup.object().shape({
-  firstName,
-  lastName,
-  yearOfBirth: yup.string()
-    .required('This field is required'),
-  country: yup.string().required('This field is required'),
-  state: yup.string()
-    .required('This field is required'),
-  address: limitSymbols200,
-  city: limitSymbols200,
-  zipCode,
-  username,
-});
-
-export const validationStateNotRequired = yup.object().shape({
-  state: yup.string().notRequired(),
-});
-
-export const validationNameRequired = yup.object().shape({
-  name: yup.string()
-    .required('This field is required')
-    .max(100, 'Cannot be more than 100 characters.'),
-});
-
-export const validationDeleteAccount = yup.object().shape({
-  deleteField: yup.string()
-    .equals(['DELETE'], 'Field value must be "DELETE"')
-    .required('This field is required'),
-});
-
-const validationColleges = yup.object().shape({
-  colleges: yup.array().of(
-    yup.object().shape({
-      college: yup.string().required('This field is required'),
-      periodInYears: yup.string().required('This field is required'),
-    }),
-  ),
-});
-
-export const validationCalculator = {
-  occupation: yup.object().shape({ occupation: yup.string().required('This field is required') }),
-  startYear: yup.object().shape({ startYear: yup.string().required('This field is required') }),
-  communityCollege: validationColleges,
-  undergraduateCollege: validationColleges,
-  graduateCollege: validationColleges,
-  lifeAfter: yup.object().shape({ state: yup.string().required('This field is required') }),
-};
-
-export const validationResultBaseValues = yup.object().shape({
-  occupation: yup.object().shape({ name: yup.string().required('This field is required') }),
-  startYear: yup.string().required('This field is required'),
-  lifeAfter: yup.object().shape({
-    state: yup.string().required('This field is required'),
-    retireYear: yup.string().required('This field is required'),
-  }),
-});
-
-const { shape } = yup.object();
 
 export default {
   validationSignUp,

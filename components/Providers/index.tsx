@@ -3,6 +3,7 @@
 import { FC, ReactNode } from 'react';
 import { SessionProvider } from 'next-auth/react';
 import UnsavedChangesProvider from '@/context/unsavedChanges';
+import { TooltipProvider } from '@/components/ui/tooltip';
 
 interface ProvidersProps {
     children: ReactNode;
@@ -10,9 +11,11 @@ interface ProvidersProps {
 
 const Providers: FC<ProvidersProps> = ({ children }) => (
   <SessionProvider>
-    <UnsavedChangesProvider>
-      {children}
-    </UnsavedChangesProvider>
+    <TooltipProvider>
+      <UnsavedChangesProvider>
+        {children}
+      </UnsavedChangesProvider>
+    </TooltipProvider>
   </SessionProvider>
 );
 

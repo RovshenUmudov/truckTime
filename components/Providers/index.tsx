@@ -4,6 +4,7 @@ import { FC, ReactNode } from 'react';
 import { SessionProvider } from 'next-auth/react';
 import UnsavedChangesProvider from '@/context/unsavedChanges';
 import { TooltipProvider } from '@/components/ui/tooltip';
+import { ThemeProvider } from 'next-themes';
 
 interface ProvidersProps {
     children: ReactNode;
@@ -11,11 +12,18 @@ interface ProvidersProps {
 
 const Providers: FC<ProvidersProps> = ({ children }) => (
   <SessionProvider>
-    <TooltipProvider>
-      <UnsavedChangesProvider>
-        {children}
-      </UnsavedChangesProvider>
-    </TooltipProvider>
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="system"
+      enableSystem
+      disableTransitionOnChange
+    >
+      <TooltipProvider>
+        <UnsavedChangesProvider>
+          {children}
+        </UnsavedChangesProvider>
+      </TooltipProvider>
+    </ThemeProvider>
   </SessionProvider>
 );
 

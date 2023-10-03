@@ -51,7 +51,7 @@ const Input = React.forwardRef<HTMLInputElement, IInputProps>(
         ) : null}
       </div>
       {helper ? <div className="ml-1 mt-1 text-placeholder font-light text-xs">{helper}</div> : null}
-      {error?.length ? <div className="text-error text-sm mt-1">{error}</div> : null}
+      {error?.length ? <div className="text-destructive text-sm mt-1">{error}</div> : null}
     </div>
 
   ),

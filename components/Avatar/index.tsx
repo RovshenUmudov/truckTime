@@ -11,7 +11,7 @@ const UserAvatar: FC = () => {
     <Avatar className="w-14 h-14 max-[768px]:w-10 max-[768px]:h-10">
       <AvatarImage src={session?.user?.imageURL || ''} alt="user avatar" />
       <AvatarFallback className="text-xl max-[768px]:text-[14px]">
-        {session?.user?.email?.slice(0, 1).toUpperCase()}
+        {(session?.user?.email?.slice(0, 1) || 'U').toUpperCase()}
       </AvatarFallback>
     </Avatar>
   );

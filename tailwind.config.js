@@ -17,6 +17,7 @@ module.exports = {
     },
     extend: {
       colors: {
+        success: 'hsl(var(--success))',
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         placeholder: 'var(--placeholder)',
@@ -32,8 +33,8 @@ module.exports = {
           foreground: 'hsl(var(--secondary-foreground))',
         },
         destructive: {
-          DEFAULT: 'hsl(var(--destructive))',
-          foreground: 'hsl(var(--destructive-foreground))',
+          DEFAULT: 'var(--destructive)',
+          foreground: 'var(--destructive-foreground)',
         },
         muted: {
           DEFAULT: 'hsl(var(--muted))',
@@ -50,10 +51,6 @@ module.exports = {
         card: {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
-        },
-        error: {
-          DEFAULT: 'var(--color-error)',
-          foreground: 'var(--color-error)',
         },
       },
       borderRadius: {

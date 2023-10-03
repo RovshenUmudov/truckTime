@@ -11,7 +11,13 @@ export async function GET(req: Request) {
       return new Response(JSON.stringify({ message: 'User not found' }), { status: 401 });
     }
 
-    const total = await Cargo.countDocuments();
+    let total = 0;
+
+    if (user.get('role') === EnumUserRole.admin) {
+      total = await Cargo.countDocuments();
+    } else {
+      total = await Cargo.find({ userId: user.get('_id') }).countDocuments();
+    }
 
     const sort = searchParams.get('sort') === 'DESC' ? 1 : -1;
 

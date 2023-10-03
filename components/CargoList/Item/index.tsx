@@ -81,7 +81,9 @@ const CargoItem: FC<ICargoItem> = async ({ data, token, role }) => {
             {data.remainingTime?.hours !== undefined && data.remainingTime?.minutes !== undefined ? (
               <CargoFeature title="Remaining time" feature={beatifyTime(data.remainingTime)} noBorder />
             ) : null}
-            <CargoFeature title="User" feature={user?.data?.email || ''} />
+            {role === EnumUserRole.admin ? (
+              <CargoFeature title="User" feature={user?.data?.email || ''} />
+            ) : null}
           </div>
         </CardContent>
       </Card>

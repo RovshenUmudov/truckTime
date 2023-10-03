@@ -1,8 +1,8 @@
 import { fetchAPI } from '@/utils/fetch';
-import { IUserMe } from '@/types';
+import { IUser } from '@/types';
 
-export async function postProfile(data: Partial<IUserMe>, token: string) {
-  const res = await fetchAPI<IUserMe, undefined, Partial<IUserMe>>(
+export async function postProfile(data: Partial<IUser>, token: string) {
+  const res = await fetchAPI<IUser, undefined, Partial<IUser>>(
     '/users/me',
     undefined,
     {

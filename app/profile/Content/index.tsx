@@ -1,7 +1,7 @@
 'use client';
 
 import { FC, useTransition } from 'react';
-import { IUserMe } from '@/types';
+import { IUser } from '@/types';
 import { postProfile } from '@/app/profile/requests';
 import { useSession } from 'next-auth/react';
 import useNotify from '@/hooks/notify';
@@ -11,7 +11,7 @@ import ProfileForm from '@/components/Forms/ProfileForm';
 import { useContextUnsavedChanges } from '@/context/unsavedChanges';
 
 interface IProfileContent {
-  user: IUserMe;
+  user: IUser;
 }
 
 const ProfileContent: FC<IProfileContent> = ({ user }) => {
@@ -21,7 +21,7 @@ const ProfileContent: FC<IProfileContent> = ({ user }) => {
   const { handleUnsavedChanges } = useContextUnsavedChanges();
   const [, startTransition] = useTransition();
 
-  const handleSubmit = async (values: Partial<IUserMe>, setSubmitting: (isSubmitting: boolean) => void) => {
+  const handleSubmit = async (values: Partial<IUser>, setSubmitting: (isSubmitting: boolean) => void) => {
     const res = await postProfile(values, session?.tokens?.access.token || '');
 
     setSubmitting(false);

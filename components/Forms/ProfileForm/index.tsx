@@ -7,12 +7,12 @@ import { Loader2 } from 'lucide-react';
 import { useFormik } from 'formik';
 import { validationProfile } from '@/utils/validations';
 import { isObjEqual, numberRegExp } from '@/utils';
-import { IUserMe } from '@/types';
+import { IUser } from '@/types';
 import { useContextUnsavedChanges } from '@/context/unsavedChanges';
 
 interface IProfileProps {
-  initialValues: Partial<IUserMe>;
-  handleSubmit: (values: Partial<IUserMe>, setSubmitting: (isSubmitting: boolean) => void) => void;
+  initialValues: Partial<IUser>;
+  handleSubmit: (values: Partial<IUser>, setSubmitting: (isSubmitting: boolean) => void) => void;
 }
 
 const ProfileForm: FC<IProfileProps> = ({
@@ -21,7 +21,7 @@ const ProfileForm: FC<IProfileProps> = ({
 }) => {
   const { handleUnsavedChanges, unsavedChanges } = useContextUnsavedChanges();
 
-  const formik = useFormik<Partial<IUserMe>>({
+  const formik = useFormik<Partial<IUser>>({
     initialValues: {
       averageSpeed: initialValues.averageSpeed || 77,
       restTime: initialValues.restTime || 11,

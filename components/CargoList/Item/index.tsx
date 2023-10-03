@@ -1,27 +1,46 @@
-'use client';
-
-import { FC, useMemo } from 'react';
-import { EnumCargoType, ICargo } from '@/types';
+import { FC } from 'react';
+import { EnumCargoType, EnumUserRole, ICargo, IUser } from '@/types';
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import CargoFeature from '@/components/CargoList/Item/Feature';
 import moment from 'moment';
 import { beatifyTime, splitTimeStr } from '@/utils';
+import { fetchAPI } from '@/utils/fetch';
 
 interface ICargoItem {
   data: ICargo;
+  token: string;
+  role: EnumUserRole;
 }
 
-const CargoItem: FC<ICargoItem> = ({ data }) => {
-  const lastUnload = useMemo(() => {
-    if (data.type === EnumCargoType.multiple) {
-      const [lastElem] = data.multipleUnload.slice(-1);
+export async function getUserById(id: string, token: string) {
+  if (!id) return null;
 
-      return lastElem;
-    }
+  const res = await fetchAPI<IUser, undefined>(
+    `/users/${id}`,
+    undefined,
+    {
+      method: 'GET',
+      accessToken: token,
+    },
+  );
 
-    return undefined;
-  }, [data.type]);
+  return res;
+}
+
+const CargoItem: FC<ICargoItem> = async ({ data, token, role }) => {
+  let user = null;
+  let lastUnload = null;
+
+  if (role === EnumUserRole.admin) {
+    user = await getUserById(data.userId || '', token);
+  }
+
+  if (data.type === EnumCargoType.multiple) {
+    const [lastElem] = data.multipleUnload.slice(-1);
+
+    lastUnload = lastElem;
+  }
 
   return (
     <Link href={`/cargos/${data._id}`}>
@@ -62,6 +81,7 @@ const CargoItem: FC<ICargoItem> = ({ data }) => {
             {data.remainingTime?.hours !== undefined && data.remainingTime?.minutes !== undefined ? (
               <CargoFeature title="Remaining time" feature={beatifyTime(data.remainingTime)} noBorder />
             ) : null}
+            <CargoFeature title="User" feature={user?.data?.email || ''} />
           </div>
         </CardContent>
       </Card>

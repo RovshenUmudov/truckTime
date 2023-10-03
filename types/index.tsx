@@ -35,8 +35,8 @@ export interface ITokens {
   refresh: IToken;
 }
 
-export interface IUserMe {
-  id: string;
+export interface IUser {
+  _id: string;
   email: string;
   imageURL?: string;
   averageSpeed: number;

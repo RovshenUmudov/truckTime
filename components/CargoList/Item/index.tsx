@@ -54,17 +54,21 @@ const CargoItem: FC<ICargoItem> = async ({ data, token, role }) => {
             <CargoFeature title="Type" feature={data.type || ''} />
             <CargoFeature title="Dictance" feature={data.totalDistance || '~'} prefix="km" />
             <CargoFeature title="Avg. speed" feature={data.averageSpeed} prefix="km/h" />
-            <CargoFeature title="Start Date" feature={moment(data.startDate).format('ddd. MMM. DD.MM.YY HH:mm')} />
+            <CargoFeature
+              title="Start Date"
+              feature={moment(data.startDate).parseZone().format('ddd. MMM. DD.MM.YY HH:mm')}
+            />
             {!data.type || data.type === EnumCargoType.single ? (
               <CargoFeature
                 title="Unload Date"
-                feature={moment(data.unloadDate).format('ddd. MMM. DD.MM.YY HH:mm')}
+                feature={moment(data.unloadDate).parseZone().format('ddd. MMM. DD.MM.YY HH:mm')}
               />
             ) : (
               <CargoFeature
                 title="Unload Date"
                 feature={moment(lastUnload?.date || '')
                   .set(splitTimeStr(lastUnload?.time || ''))
+                  .parseZone()
                   .format('ddd. MMM. DD.MM.YY HH:mm')}
               />
             )}

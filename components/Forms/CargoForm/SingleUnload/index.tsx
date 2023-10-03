@@ -17,7 +17,7 @@ const SingleUnload: FC<IUnload> = ({ formik }) => (
       value={formik.values.unloadDate ? moment(formik.values.unloadDate).toDate() : undefined}
       onBlur={formik.handleBlur}
       fromDate={moment(formik.values.startDate).toDate()}
-      onChange={(date: Date | undefined) => formik.setFieldValue('unloadDate', moment(date).format())}
+      onChange={(date: Date | undefined) => formik.setFieldValue('unloadDate', moment(date).parseZone().format())}
       error={formik.touched.unloadDate && formik.errors.unloadDate?.length ? formik.errors.unloadDate : null}
     />
     <Input

@@ -153,7 +153,7 @@ const CargoForm: FC<ICargoProps> = ({
             disabled={formik.isSubmitting}
             value={moment(formik.values.startDate).toDate()}
             onBlur={formik.handleBlur}
-            onChange={(date: Date | undefined) => formik.setFieldValue('startDate', moment(date).format())}
+            onChange={(date: Date | undefined) => formik.setFieldValue('startDate', moment(date).parseZone().format())}
             error={formik.touched.startDate && formik.errors.startDate?.length ? formik.errors.startDate : null}
           />
           <Input

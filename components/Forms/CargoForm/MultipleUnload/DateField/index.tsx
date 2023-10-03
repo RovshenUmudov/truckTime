@@ -22,7 +22,7 @@ const UnloadDateField: FC<IMultipleUnloadField> = ({
       formik.setFieldValue(
         'multipleUnload',
         formik.values.multipleUnload.map((el, idx) => (
-          index === idx ? { ...el, date: moment(date).format() } : el
+          index === idx ? { ...el, date: moment(date).parseZone().format() } : el
         )),
       );
     }}

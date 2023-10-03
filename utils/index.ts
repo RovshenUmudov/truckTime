@@ -141,7 +141,7 @@ export const calculateCargo = (values: ICargo, userRestTime: number) => {
     [lastMultipleUnload] = multipleUnload.slice(-1);
 
     multipleUnload.forEach((el, index) => {
-      const { totalInSeconds } = splitTimeStr(el.breakTime);
+      const { totalInSeconds } = splitTimeStr(el.breakTime || '');
 
       breaks += multipleUnload.length > 1 && index < multipleUnload.length - 1 ? (totalInSeconds || 0) : 0;
       distance += +el.distance || 0;

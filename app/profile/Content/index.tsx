@@ -40,7 +40,7 @@ const ProfileContent: FC<IProfileContent> = ({ user }) => {
   };
 
   return (
-    <div className="max-w-[700px] mb-5">
+    <div className="max-w-[768px] mb-5">
       <PageTitle title="Profile" />
       <ProfileForm initialValues={user} handleSubmit={handleSubmit} />
     </div>

@@ -56,6 +56,13 @@ const ProfileForm: FC<IProfileProps> = ({
           value={initialValues.email}
         />
         <Input
+          name="role"
+          placeholder="Role"
+          label="Role"
+          disabled
+          value={initialValues.role || ''}
+        />
+        <Input
           prefix="km/h"
           name="averageSpeed"
           placeholder="Average Speed"

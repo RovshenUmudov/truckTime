@@ -68,9 +68,9 @@ const MultipleUnload: FC<IUnload> = ({ formik }) => (
     ))}
     <Button
       type="button"
-      disabled={formik.values.multipleUnload.length >= 3}
+      disabled={formik.values.multipleUnload.length >= 6}
       onClick={() => {
-        if (formik.values.multipleUnload.length < 3) {
+        if (formik.values.multipleUnload.length < 6) {
           formik.setFieldValue(
             'multipleUnload',
             [...formik.values.multipleUnload, {}],

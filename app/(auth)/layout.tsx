@@ -3,10 +3,10 @@ import Image from 'next/image';
 import MainLogo from '@/components/ui/Logo';
 
 const AuthLayout = ({ children }: { children: ReactNode; }) => (
-  <div className="container relative h-screen flex-col items-center
+  <div className="container relative h-screen items-center
       justify-center grid max-w-none lg:grid-cols-2 lg:px-0"
   >
-    <div className="relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex">
+    <div className="relative hidden h-full bg-muted p-10 text-white dark:border-r lg:flex flex-col items-start">
       <Image
         className="z-30 inset-0 absolute h-full object-cover"
         src="/auth/auth-bg.jpg"
@@ -16,9 +16,9 @@ const AuthLayout = ({ children }: { children: ReactNode; }) => (
         fill
         quality={85}
       />
-      <MainLogo />
+      <MainLogo darkMode />
       <div className="relative z-30 mt-auto">
-        <blockquote className="space-y-2">
+        <blockquote>
           <p className="text-lg">
             "This web application was created special for truck drives to save their time."
           </p>

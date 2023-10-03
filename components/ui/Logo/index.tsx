@@ -7,13 +7,17 @@ import { useContextUnsavedChanges } from '@/context/unsavedChanges';
 import useNotify from '@/hooks/notify';
 import { useRouter } from 'next/navigation';
 
-const MainLogo: FC = () => {
+interface IMainLogo {
+    darkMode?: boolean;
+}
+
+const MainLogo: FC<IMainLogo> = ({ darkMode = false }) => {
   const { unsavedChanges, handleUnsavedChanges } = useContextUnsavedChanges();
   const { confirm } = useNotify();
   const router = useRouter();
 
   return (
-    <div className="relative z-30">
+    <div className={`relative min-w-[130px] z-30 ${darkMode ? 'text-[#000]' : ''}`}>
       <Link
         href="/"
         onClickCapture={(e) => {

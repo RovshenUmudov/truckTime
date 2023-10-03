@@ -25,7 +25,7 @@ const HeaderProfile: FC = () => (
         <UserAvatar />
       </Button>
     </DropdownMenuTrigger>
-    <DropdownMenuContent className="w-55">
+    <DropdownMenuContent className="w-55" align="end">
       <DropdownMenuLabel>My Account</DropdownMenuLabel>
       <DropdownMenuSeparator />
       <DropdownMenuGroup>

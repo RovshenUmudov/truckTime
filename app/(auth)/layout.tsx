@@ -16,7 +16,7 @@ const AuthLayout = ({ children }: { children: ReactNode; }) => (
         fill
         quality={85}
       />
-      <MainLogo darkMode />
+      <MainLogo />
       <div className="relative z-30 mt-auto">
         <blockquote className="space-y-2">
           <p className="text-lg">

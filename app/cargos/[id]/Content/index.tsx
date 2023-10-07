@@ -27,7 +27,7 @@ const EditCargoContent: FC<IEditCargoContent> = ({ data }) => {
       ...values,
       startDate: moment(values.startDate).set(startTime).format(),
       unloadDate: values.type === EnumCargoType.multiple ? '' : moment(values.unloadDate).set(unloadTime).format(),
-      unloadTime: values.type === EnumCargoType.multiple ? '' : values.unloadTime,
+      unloadTime: values.type === EnumCargoType.multiple ? '00:00' : values.unloadTime,
       multipleUnload: values.type === EnumCargoType.single ? [] : values.multipleUnload,
       eightHoursRest: Number(values.eightHoursRest),
       weekendHours: Number(values.weekendHours || 0),

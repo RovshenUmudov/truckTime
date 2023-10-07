@@ -6,6 +6,7 @@ import DatePicker from '@/components/ui/Pickers/DataPicker';
 import { Input } from '@/components/ui/input';
 import moment from 'moment';
 import { Clock4 } from 'lucide-react';
+import TimeField from 'react-simple-timefield';
 
 const SingleUnload: FC<IUnload> = ({ formik }) => (
   <div className="grid gap-5 grid-cols-2 max-[768px]:grid-cols-1">
@@ -20,17 +21,21 @@ const SingleUnload: FC<IUnload> = ({ formik }) => (
       onChange={(date: Date | undefined) => formik.setFieldValue('unloadDate', moment(date).parseZone().format())}
       error={formik.touched.unloadDate && formik.errors.unloadDate?.length ? formik.errors.unloadDate : null}
     />
-    <Input
-      type="time"
-      name="unloadTime"
-      label="Unload Time *"
-      placeholder="Set time"
-      icon={<Clock4 className="w-4 h-4" />}
-      disabled={formik.isSubmitting}
+    <TimeField
+      colon=":"
       value={formik.values.unloadTime}
       onChange={formik.handleChange}
-      onBlur={formik.handleBlur}
-      error={formik.touched.unloadTime && formik.errors.unloadTime?.length ? formik.errors.unloadTime : null}
+      input={(
+        <Input
+          name="unloadTime"
+          label="Unload Time *"
+          placeholder="Set time"
+          icon={<Clock4 className="w-4 h-4" />}
+          disabled={formik.isSubmitting}
+          onBlur={formik.handleBlur}
+          error={formik.touched.unloadTime && formik.errors.unloadTime?.length ? formik.errors.unloadTime : null}
+        />
+      )}
     />
   </div>
 );

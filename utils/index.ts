@@ -84,12 +84,18 @@ export const calculateDrivingTime = (distance: number, averageSpeed: number) => 
   });
 };
 
-export const calculateBreaks = (seconds: number) => {
+export const calculateBreaks = (seconds: number, weekendHours: number) => {
   const breaks = (seconds / 3600) / 8;
+
+  let restTime = breaks <= 1 ? 0 : Math.floor(breaks);
+
+  if (weekendHours > 0 && restTime > 0) {
+    restTime -= 1;
+  }
 
   return {
     oneHoursBreak: breaks < 1 ? 0 : Math.round(breaks),
-    restTime: breaks <= 1 ? 0 : Math.floor(breaks),
+    restTime,
   };
 };
 
@@ -124,6 +130,7 @@ export const calculateCargo = (values: ICargo, userRestTime: number) => {
     eightHoursRest,
     averageSpeed,
     multipleUnload,
+    weekendHours,
     type,
   } = values;
 
@@ -159,10 +166,8 @@ export const calculateCargo = (values: ICargo, userRestTime: number) => {
     const differenceInSeconds = unloadDataTime.diff(loadDateTime, 'seconds');
     const remainingTimeTodayInSeconds = remainingTimeToSeconds(remainingWorkHours, differenceInSeconds);
     const driving = calculateDrivingTime(distance, averageSpeed);
-    const { oneHoursBreak, restTime } = calculateBreaks(driving.totalInSeconds || 0);
-
+    const { oneHoursBreak, restTime } = calculateBreaks(driving.totalInSeconds || 0, Number(weekendHours));
     const totalDuration = moment.duration(differenceInSeconds, 'seconds');
-
     let adjustedDifference = differenceInSeconds;
 
     if (differenceInSeconds / 3600 > 24) {
@@ -174,7 +179,8 @@ export const calculateCargo = (values: ICargo, userRestTime: number) => {
         - breaks
         - (driving.totalInSeconds || 0)
         - (oneHoursBreak * 3600)
-        - ((restTime * (userRestTime * 3600)) - ((eightHoursRest || 0) * 7200)),
+        - (restTime * (userRestTime * 3600)) + ((eightHoursRest || 0) * 7200)
+        - (Number(weekendHours) * 3600),
       'seconds',
     );
 
@@ -191,7 +197,7 @@ export const calculateCargo = (values: ICargo, userRestTime: number) => {
       driving,
       totalDistance: distance,
       userRestTime,
-      totalRestTime: oneHoursBreak + (restTime * userRestTime),
+      totalRestTime: oneHoursBreak + (restTime * userRestTime) + Number(weekendHours),
       eightHoursRest,
       oneHoursBreak,
     };

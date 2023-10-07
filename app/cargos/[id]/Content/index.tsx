@@ -29,6 +29,8 @@ const EditCargoContent: FC<IEditCargoContent> = ({ data }) => {
       unloadDate: values.type === EnumCargoType.multiple ? '' : moment(values.unloadDate).set(unloadTime).format(),
       unloadTime: values.type === EnumCargoType.multiple ? '' : values.unloadTime,
       multipleUnload: values.type === EnumCargoType.single ? [] : values.multipleUnload,
+      eightHoursRest: Number(values.eightHoursRest),
+      weekendHours: Number(values.weekendHours || 0),
     };
 
     const res = await updateCargoById(session?.tokens?.access.token || '', newValues);

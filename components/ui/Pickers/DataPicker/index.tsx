@@ -1,6 +1,6 @@
 'use client';
 
-import { FC } from 'react';
+import { FC, useRef } from 'react';
 import { format } from 'date-fns';
 import { Calendar as CalendarIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -31,37 +31,45 @@ const DatePicker: FC<IDatePicker> = ({
   error,
   fromDate,
   onBlur,
-}) => (
-  <div>
-    <Popover>
-      <Label>{label}</Label>
-      <PopoverTrigger asChild>
-        <Button
-          disabled={disabled}
-          variant="outline"
-          className={clsx(
-            'w-full justify-start text-left font-normal',
-            !value && 'text-muted-foreground',
-          )}
-        >
-          <CalendarIcon className="mr-2 h-4 w-4" />
-          {value ? format(value, 'PPP') : <span>{placeholder}</span>}
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-auto p-0">
-        <Calendar
-          mode="single"
-          selected={value}
-          onSelect={onChange}
-          fromDate={fromDate}
-          onDayBlur={() => {
-            if (onBlur) onBlur({ target: { name } });
-          }}
-        />
-      </PopoverContent>
-    </Popover>
-    {error?.length ? <div className="text-error text-sm mt-1">{error}</div> : null}
-  </div>
-);
+}) => {
+  const btnRef = useRef<HTMLButtonElement>(null);
+
+  return (
+    <div>
+      <Popover>
+        <Label>{label}</Label>
+        <PopoverTrigger asChild>
+          <Button
+            ref={btnRef}
+            disabled={disabled}
+            variant="outline"
+            className={clsx(
+              'w-full justify-start text-left font-normal',
+              !value && 'text-muted-foreground',
+            )}
+          >
+            <CalendarIcon className="mr-2 h-4 w-4" />
+            {value ? format(value, 'PPP') : <span>{placeholder}</span>}
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-0">
+          <Calendar
+            mode="single"
+            selected={value}
+            onSelect={(e) => {
+              onChange(e);
+              if (btnRef.current) btnRef.current.click();
+            }}
+            fromDate={fromDate}
+            onDayBlur={() => {
+              if (onBlur) onBlur({ target: { name } });
+            }}
+          />
+        </PopoverContent>
+      </Popover>
+      {error?.length ? <div className="text-error text-sm mt-1">{error}</div> : null}
+    </div>
+  );
+};
 
 export default DatePicker;

@@ -7,7 +7,7 @@ interface IInputSelect {
     name: string;
     options: IOption[];
     placeholder?: string;
-    defaultValue?: string;
+    defaultValue?: string | number;
     label?: string;
     disabled?: boolean;
     handleChange: (value: string) => void;
@@ -29,7 +29,7 @@ const InputSelect: FC<IInputSelect> = ({
     <Select
       name={name}
       onValueChange={(e: string) => handleChange(e)}
-      defaultValue={defaultValue}
+      defaultValue={defaultValue.toString()}
       disabled={disabled}
     >
       <SelectTrigger>
@@ -37,7 +37,7 @@ const InputSelect: FC<IInputSelect> = ({
       </SelectTrigger>
       <SelectContent>
         {options?.map(({ value, label, disabled = false }) => (
-          <SelectItem key={crypto.randomUUID()} value={value} disabled={disabled}>{label}</SelectItem>
+          <SelectItem key={crypto.randomUUID()} value={value.toString()} disabled={disabled}>{label}</SelectItem>
         ))}
       </SelectContent>
     </Select>

@@ -49,6 +49,13 @@ export enum EnumCargoType {
   'single' = 'single',
 }
 
+export enum EnumEightHourRest {
+  'None' = 0,
+  'One' = 1,
+  'Two' = 2,
+  'Three' = 3,
+}
+
 export interface IMultipleUnload {
   date: string;
   time: string;
@@ -66,8 +73,9 @@ export interface ICargo {
   unloadDate: string | undefined;
   unloadTime: string | undefined;
   averageSpeed: number;
+  weekendHours: number;
   totalDistance: number | undefined;
-  eightHoursRest: number;
+  eightHoursRest: EnumEightHourRest;
   oneHoursBreak: number;
   totalRestTime: number;
   userRestTime: number;
@@ -101,7 +109,7 @@ export interface IMetadataParams {
 
 export type IOption = {
   label: string;
-  value: string;
+  value: string | number;
   disabled?: boolean;
 }
 

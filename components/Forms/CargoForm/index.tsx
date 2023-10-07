@@ -2,12 +2,12 @@
 
 import { FC, useEffect, useState } from 'react';
 import { Input } from '@/components/ui/input';
-import { Bed, Clock4, Loader2 } from 'lucide-react';
+import { Clock4, Loader2 } from 'lucide-react';
 import { useFormik } from 'formik';
 import { validationCargo } from '@/utils/validations';
 import DatePicker from '@/components/ui/Pickers/DataPicker';
-import { calculateCargo, eightHoursRestCountRegExp, isObjEqual, numberRegExp } from '@/utils';
-import { EnumCargoType, ICargo, IOption } from '@/types';
+import { calculateCargo, isObjEqual, numberRegExp } from '@/utils';
+import { EnumCargoType, EnumEightHourRest, ICargo, IOption } from '@/types';
 import { useContextUnsavedChanges } from '@/context/unsavedChanges';
 import moment from 'moment';
 import InputSelect from '@/components/ui/InputSelect';
@@ -30,6 +30,19 @@ const optionsList: IOption[] = [
   { label: 'Multiple unload', value: EnumCargoType.multiple },
 ];
 
+const optionsListEightHourRest: IOption[] = [
+  { label: 'None', value: EnumEightHourRest.None },
+  { label: 'One', value: EnumEightHourRest.One },
+  { label: 'Two', value: EnumEightHourRest.Two },
+  { label: 'Three', value: EnumEightHourRest.Three },
+];
+
+const optionsListWeekend: IOption[] = [
+  { label: 'None', value: '0' },
+  { label: '24 hours', value: '24' },
+  { label: '45 hours', value: '45' },
+];
+
 export const defaultCargoFormValues: ICargo = {
   title: '',
   startDate: moment().set({ hour: 0, minutes: 0, second: 0, millisecond: 0 }).format('YYYY-MM-DDTHH:mm:ssZ'),
@@ -42,11 +55,12 @@ export const defaultCargoFormValues: ICargo = {
   }],
   unloadDate: undefined,
   unloadTime: '',
+  weekendHours: 0,
   averageSpeed: 77,
   totalDistance: undefined,
   totalRestTime: 0,
   type: EnumCargoType.single,
-  eightHoursRest: 0,
+  eightHoursRest: EnumEightHourRest.None,
   userRestTime: 11,
   oneHoursBreak: 0,
   remainingWorkHours: '08:00',
@@ -132,9 +146,9 @@ const CargoForm: FC<ICargoProps> = ({
             onChange={formik.handleChange}
             input={(
               <Input
-                prefix="h:m"
                 label="Remaining Hours *"
                 name="remainingWorkHours"
+                icon={<Clock4 className="w-4 h-4" />}
                 disabled={formik.isSubmitting}
                 helper="Type the remaining work hours for today"
                 onBlur={formik.handleBlur}
@@ -156,17 +170,20 @@ const CargoForm: FC<ICargoProps> = ({
             onChange={(date: Date | undefined) => formik.setFieldValue('startDate', moment(date).parseZone().format())}
             error={formik.touched.startDate && formik.errors.startDate?.length ? formik.errors.startDate : null}
           />
-          <Input
-            type="time"
-            name="startTime"
-            label="Start Time *"
-            placeholder="Set time"
-            icon={<Clock4 className="w-4 h-4" />}
-            disabled={formik.isSubmitting}
+          <TimeField
+            colon=":"
             value={formik.values.startTime}
             onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            error={formik.touched.startTime && formik.errors.startTime?.length ? formik.errors.startTime : null}
+            input={(
+              <Input
+                label="Start Time *"
+                name="startTime"
+                icon={<Clock4 className="w-4 h-4" />}
+                disabled={formik.isSubmitting}
+                onBlur={formik.handleBlur}
+                error={formik.touched.startTime && formik.errors.startTime?.length ? formik.errors.startTime : null}
+              />
+            )}
           />
         </div>
         {formik.values.type === EnumCargoType.multiple ? (
@@ -201,18 +218,21 @@ const CargoForm: FC<ICargoProps> = ({
           />
         </div>
         <div className="grid gap-5 grid-cols-3 max-[768px]:grid-cols-1">
-          <Input
-            name="eightHoursRest"
+          <InputSelect
             label="Eight Hours Rest"
-            placeholder="0"
-            icon={<Bed className="w-4 h-4" />}
-            value={formik.values.eightHoursRest || ''}
-            onChange={(e) => {
-              if (eightHoursRestCountRegExp.test(e.target.value)) {
-                formik.setFieldValue('eightHoursRest', parseFloat(e.target.value));
-              }
-              if (e.target.value === '') formik.handleChange(e);
-            }}
+            name="eightHoursRest"
+            options={optionsListEightHourRest}
+            defaultValue={formik.values.eightHoursRest || 0}
+            disabled={formik.isSubmitting}
+            handleChange={(e) => formik.setFieldValue('eightHoursRest', e)}
+          />
+          <InputSelect
+            label="Weekend Hours"
+            name="weekendHours"
+            options={optionsListWeekend}
+            defaultValue={formik.values.weekendHours || 0}
+            disabled={formik.isSubmitting}
+            handleChange={(e) => formik.setFieldValue('weekendHours', e)}
           />
           <Input
             name="oneHoursBreak"

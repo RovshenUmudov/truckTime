@@ -20,8 +20,8 @@ const EditCargoContent: FC<IEditCargoContent> = ({ data }) => {
   const router = useRouter();
   const [, startTransition] = useTransition();
   const handleSubmit = async (values: ICargo, setSubmitting: (isSubmitting: boolean) => void) => {
-    const startTime = splitTimeStr(values.startTime || '');
-    const unloadTime = splitTimeStr(values.unloadTime || '');
+    const startTime = splitTimeStr(values.startTime || '00:00');
+    const unloadTime = splitTimeStr(values.unloadTime || '00:00');
 
     const newValues: ICargo = {
       ...values,

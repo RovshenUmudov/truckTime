@@ -46,7 +46,7 @@ const optionsListWeekend: IOption[] = [
 export const defaultCargoFormValues: ICargo = {
   title: '',
   startDate: moment().set({ hour: 0, minutes: 0, second: 0, millisecond: 0 }).format('YYYY-MM-DDTHH:mm:ssZ'),
-  startTime: '',
+  startTime: '00:00',
   multipleUnload: [{
     date: '',
     time: '00:00',

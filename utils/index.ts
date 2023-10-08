@@ -109,8 +109,12 @@ export const combineDateTime = (date: string, time: string) => {
   return moment(dateTime);
 };
 
-export const remainingTimeToSeconds = (value: string) => {
+export const remainingTimeToSeconds = (value: string, differenceInSeconds: number) => {
   const { totalInSeconds } = splitTimeStr(value);
+
+  if (differenceInSeconds <= eightHoursInSeconds) {
+    return differenceInSeconds - (totalInSeconds || 0);
+  }
 
   return eightHoursInSeconds - (totalInSeconds || 0);
 };
@@ -158,7 +162,7 @@ export const calculateCargo = (values: ICargo, userRestTime: number) => {
     }
 
     const differenceInSeconds = unloadDataTime.diff(loadDateTime, 'seconds');
-    const remainingTimeTodayInSeconds = remainingTimeToSeconds(remainingWorkHours);
+    const remainingTimeTodayInSeconds = remainingTimeToSeconds(remainingWorkHours, differenceInSeconds);
     const driving = calculateDrivingTime(distance, averageSpeed);
     const { oneHoursBreak, restTime } = calculateBreaks(driving.totalInSeconds || 0, Number(weekendHours));
     const totalDuration = moment.duration(differenceInSeconds, 'seconds');

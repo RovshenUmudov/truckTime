@@ -72,8 +72,6 @@ export function isObjEqual<T>(object1: T, object2: T): boolean {
 }
 
 export const numberRegExp = /^[0-9]*$/;
-export const eightHoursRestCountRegExp = /^[0-3]$/;
-
 export const calculateDrivingTime = (distance: number, averageSpeed: number) => {
   const drivingSeconds = (distance / averageSpeed) * 3600;
   const duration = moment.duration(drivingSeconds, 'seconds');
@@ -111,12 +109,8 @@ export const combineDateTime = (date: string, time: string) => {
   return moment(dateTime);
 };
 
-export const remainingTimeToSeconds = (value: string, differenceInSeconds: number) => {
+export const remainingTimeToSeconds = (value: string) => {
   const { totalInSeconds } = splitTimeStr(value);
-
-  if (differenceInSeconds / 3600 <= 24) {
-    return totalInSeconds || 0;
-  }
 
   return eightHoursInSeconds - (totalInSeconds || 0);
 };
@@ -164,18 +158,14 @@ export const calculateCargo = (values: ICargo, userRestTime: number) => {
     }
 
     const differenceInSeconds = unloadDataTime.diff(loadDateTime, 'seconds');
-    const remainingTimeTodayInSeconds = remainingTimeToSeconds(remainingWorkHours, differenceInSeconds);
+    const remainingTimeTodayInSeconds = remainingTimeToSeconds(remainingWorkHours);
     const driving = calculateDrivingTime(distance, averageSpeed);
     const { oneHoursBreak, restTime } = calculateBreaks(driving.totalInSeconds || 0, Number(weekendHours));
     const totalDuration = moment.duration(differenceInSeconds, 'seconds');
-    let adjustedDifference = differenceInSeconds;
-
-    if (differenceInSeconds / 3600 > 24) {
-      adjustedDifference = differenceInSeconds - remainingTimeTodayInSeconds;
-    }
 
     const duration = moment.duration(
-      adjustedDifference
+      differenceInSeconds
+        - remainingTimeTodayInSeconds
         - breaks
         - (driving.totalInSeconds || 0)
         - (oneHoursBreak * 3600)
